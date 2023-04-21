@@ -5,12 +5,12 @@
 #include"star.h"
 #include"galaxy.h"
 
-void catalogue::add_object(astronomical_object &object)
+void catalogue::add_object(astronomical_object *object)
 {
-    auto result = object_ptrs.emplace(std::pair(object.get_name(), &object));
+    auto result = object_ptrs.emplace(std::pair(object->get_name(), object));
     if (!result.second){ // if emplace fails
         std::stringstream error_message;
-        error_message<<"Object with name "<<object.get_name()<<" already exists.";
+        error_message<<"Object with name "<<object->get_name()<<" already exists.";
         throw std::invalid_argument(error_message.str());
     }
 }
@@ -58,28 +58,26 @@ void catalogue::load(std::string file_name)
             enum cases{is_star, is_galaxy };
             std::map<std::string, cases> cases{{"star", is_star}, {"galaxy", is_galaxy}};
 
-            double mass;
+            astronomical_object* new_object_ptr{nullptr};
 
             switch(cases[type]) {
-                case is_star:{
+                case is_star:
                     std::cerr <<"*star*";
-                    star new_object{name};
-                    new_object.populate(file, line_counter);
-                    new_catalogue.add_object(new_object);
-
+                    new_object_ptr = new star(name); 
                     break;
-                }
-                case is_galaxy:{
+                
+                case is_galaxy:
                     std::cerr <<"*galaxy*";
-                    galaxy new_object{name};
-                    new_object.populate(file, line_counter);
-                    new_catalogue.add_object(new_object);
+                    new_object_ptr = new galaxy(name);  
                     break;
-                }
+                
 
                 default:
                     throw std::invalid_argument("Invalid astronomical object type.");
-            }       
+            } 
+            
+            new_object_ptr->populate(file, line_counter);
+            new_catalogue.add_object(new_object_ptr);      
 
             line_counter++;
             std::getline(file, line_string);
@@ -87,6 +85,8 @@ void catalogue::load(std::string file_name)
                 throw std::invalid_argument("There should be empty lines between entries.");
             }
         }
+        for (auto ptr : object_ptrs){delete ptr.second;} 
+        object_ptrs.clear();
         object_ptrs = new_catalogue.object_ptrs;
     }
     catch(std::exception& error){
