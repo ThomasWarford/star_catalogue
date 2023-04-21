@@ -5,6 +5,11 @@
 #include"star.h"
 #include"galaxy.h"
 
+catalogue::~catalogue()
+{
+    for (auto ptr : object_ptrs){delete ptr.second;} 
+}
+
 void catalogue::add_object(astronomical_object *object)
 {
     auto result = object_ptrs.emplace(std::pair(object->get_name(), object));
@@ -75,7 +80,7 @@ void catalogue::load(std::string file_name)
                 default:
                     throw std::invalid_argument("Invalid astronomical object type.");
             } 
-            
+
             new_object_ptr->populate(file, line_counter);
             new_catalogue.add_object(new_object_ptr);      
 
@@ -85,13 +90,15 @@ void catalogue::load(std::string file_name)
                 throw std::invalid_argument("There should be empty lines between entries.");
             }
         }
+
         for (auto ptr : object_ptrs){delete ptr.second;} 
         object_ptrs.clear();
-        object_ptrs = new_catalogue.object_ptrs;
+        
+        object_ptrs = std::move(new_catalogue.object_ptrs);
     }
     catch(std::exception& error){
         std::stringstream error_message;
-        error_message<<"Error on line "<<line_counter<<" of file "<<file_name<<".\n"<<error.what();
+        error_message<<"Error on line "<<line_counter<<" of file \""<<file_name<<"\".\n"<<error.what();
         throw std::invalid_argument(error_message.str());
     }
     

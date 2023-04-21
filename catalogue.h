@@ -14,6 +14,7 @@ private:
     std::map<std::string, astronomical_object*> object_ptrs;
     int get_number_of_objects(std::string file_name) const;
 public:
+    ~catalogue();
     // std::pair<std::map<std::string, astronomical_object*>::iterator, bool> add_object(astronomical_object* object_ptr)
     void add_object(astronomical_object *object);
     astronomical_object& operator[](std::string);
