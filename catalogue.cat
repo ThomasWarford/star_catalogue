@@ -1,0 +1,10 @@
+name                    star_1                 
+type                    star                    
+mass                    1              
+spectral_type           O                       
+relative_magnitude      3                       
+
+name                    galaxy_1                
+type                    galaxy                  
+mass                    1e+08                   
+hubble_type             E3  
