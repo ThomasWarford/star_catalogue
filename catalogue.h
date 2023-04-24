@@ -5,18 +5,19 @@
 #include<string>
 #include<iostream>
 #include"astronomical_object.h"
+#include<memory>
 
 
 
 class catalogue
 {
 private:
-    std::map<std::string, astronomical_object*> object_ptrs;
+    std::map<std::string, std::unique_ptr<astronomical_object>> object_ptrs;
     int get_number_of_objects(std::string file_name) const;
 public:
     ~catalogue();
     // std::pair<std::map<std::string, astronomical_object*>::iterator, bool> add_object(astronomical_object* object_ptr)
-    void add_object(astronomical_object *object);
+    void add_object(std::unique_ptr<astronomical_object> object);
     astronomical_object& operator[](std::string);
     friend std::ostream& operator<<(std::ostream& os, const catalogue& outputted_catalogue);
     // returns 1 and cancels if file already exists
