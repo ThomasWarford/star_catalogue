@@ -7,18 +7,27 @@
 
 catalogue::~catalogue()
 {
-    for (auto ptr : object_ptrs){delete ptr.second;} 
+    // for (auto ptr : object_ptrs){delete ptr.second;} 
 }
 
-void catalogue::add_object(astronomical_object *object)
-{
-    auto result = object_ptrs.emplace(std::pair(object->get_name(), object));
+void catalogue::add_object(std::unique_ptr<astronomical_object> object)
+{   
+    auto result = object_ptrs.emplace(std::pair(object->get_name(), std::move(object)));
     if (!result.second){ // if emplace fails
         std::stringstream error_message;
         error_message<<"Object with name "<<object->get_name()<<" already exists.";
         throw std::invalid_argument(error_message.str());
     }
 }
+
+// void add_object()
+// {
+//     std::cout<<"Enter the following:"
+//     std::cout<<"name: "
+    
+//     std::string input_string;
+// }
+
 
 astronomical_object& catalogue::operator[](std::string index)
 {
@@ -43,6 +52,16 @@ void catalogue::save(std::string file_name) const
     file.close();
 }
 
+type_cases catalogue::get_type_enum(std::string type_string) const
+{
+    std::map<std::string, type_cases> type_cases_map{{"star", type_cases::is_star}, {"galaxy", type_cases::is_galaxy}};
+    if (type_cases_map.find(type_string) == type_cases_map.end()) {
+        throw std::invalid_argument("Invalid astronomical object type: " + type_string);
+    }
+
+    return type_cases_map[type_string];
+}
+
 void catalogue::load(std::string file_name)
 {   
     int number_of_objects{get_number_of_objects(file_name)};
@@ -60,20 +79,18 @@ void catalogue::load(std::string file_name)
             read_line_into_var(file, GET_VARIABLE_NAME(name), name, line_counter);
             read_line_into_var(file, GET_VARIABLE_NAME(type), type, line_counter);
 
-            enum cases{is_star, is_galaxy };
-            std::map<std::string, cases> cases{{"star", is_star}, {"galaxy", is_galaxy}};
-
-            astronomical_object* new_object_ptr{nullptr};
-
-            switch(cases[type]) {
-                case is_star:
+            std::unique_ptr<astronomical_object> new_object_ptr;
+            
+            switch(get_type_enum(type)) {
+                case type_cases::is_star:
                     std::cerr <<"*star*";
-                    new_object_ptr = new star(name); 
+                    new_object_ptr = std::unique_ptr<astronomical_object>( new star(name) ); 
                     break;
                 
-                case is_galaxy:
+                case type_cases::is_galaxy:
                     std::cerr <<"*galaxy*";
-                    new_object_ptr = new galaxy(name);  
+                    new_object_ptr = std::unique_ptr<astronomical_object>( new galaxy(name) ); 
+
                     break;
                 
 
@@ -82,7 +99,7 @@ void catalogue::load(std::string file_name)
             } 
 
             new_object_ptr->populate(file, line_counter);
-            new_catalogue.add_object(new_object_ptr);      
+            new_catalogue.add_object(std::move(new_object_ptr));      
 
             line_counter++;
             std::getline(file, line_string);
@@ -91,8 +108,8 @@ void catalogue::load(std::string file_name)
             }
         }
 
-        for (auto ptr : object_ptrs){delete ptr.second;} 
-        object_ptrs.clear();
+        // for (auto ptr : object_ptrs){delete ptr.second;} 
+        // object_ptrs.clear();
         
         object_ptrs = std::move(new_catalogue.object_ptrs);
     }
@@ -102,6 +119,14 @@ void catalogue::load(std::string file_name)
         throw std::invalid_argument(error_message.str());
     }
     
+}
+
+void catalogue::load()
+{
+    std::cout << "Please enter a file name."<<std::endl;
+    std::string file_name{ input<std::string>("File name should be a string without spaces.") };
+    load(file_name);
+    std::cout << file_name << " loaded."<<std::endl;
 }
 
 int catalogue::get_number_of_objects(std::string file_name) const

@@ -7,22 +7,27 @@
 #include"astronomical_object.h"
 #include<memory>
 
-
+enum class type_cases { is_star, is_galaxy }; // defined here so it's only defined once
 
 class catalogue
 {
 private:
     std::map<std::string, std::unique_ptr<astronomical_object>> object_ptrs;
     int get_number_of_objects(std::string file_name) const;
+    type_cases get_type_enum(std::string type_string) const;
+
 public:
     ~catalogue();
     // std::pair<std::map<std::string, astronomical_object*>::iterator, bool> add_object(astronomical_object* object_ptr)
     void add_object(std::unique_ptr<astronomical_object> object);
+    void add_object();
     astronomical_object& operator[](std::string);
     friend std::ostream& operator<<(std::ostream& os, const catalogue& outputted_catalogue);
     // returns 1 and cancels if file already exists
     void save(std::string file_name) const;
     void load(std::string file_name);
+    void load();
+
 
 
     

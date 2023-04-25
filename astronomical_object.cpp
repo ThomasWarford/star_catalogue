@@ -3,11 +3,6 @@
 #include"astronomical_object.h"
 #include"io_functions.h"
 
-// astronomical_object::astronomical_object(std::string name, double mass, std::vector<std::string> children, std::string parent) : name{name}, mass{mass}, children{children}, parent{parent}
-// {   
-//     set_mass(mass);
-// }
-// use templatey stuff to print as table
 std::ostream& astronomical_object::print_base(std::ostream& os) const
 {
     os << "name:    " << name << '\n';

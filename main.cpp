@@ -12,73 +12,48 @@ const std::vector<std::string> EMPTY_STRING_VECTOR = std::vector<std::string>();
 
 int main() 
 {   
-    bool looping{true};
     catalogue cat;
 
     std::cout<<"Welcome to Tom's star catalogue."<<std::endl<<std::endl;
 
+    bool looping{true};
     while(looping){
-
-        looping = false;
-        std::cout<<"Enter a number to select one of the following options to start."<<std::endl;
-        std::cout<<"1: Load catalogue from file."<<std::endl;
-        int choice{ input<int>("Please enter an integer.") };
-        
-        switch (choice){
-            case 1:{
-                std::cout << "Please enter a file name."<<std::endl;
-                std::string file_name{ input<std::string>("File name should be a string without spaces.") };
-                cat.load(file_name);
-                std::cerr<<cat;
-                // cat.save("deez.cat");
-                break;
+        try{             
+            looping = false;
+            std::cout<<"Enter a number to select one of the following options to start."<<std::endl;
+            std::cout<<"1: Load catalogue from file."<<std::endl;
+            std::cout<<"2: Create new catalogue."<<std::endl;
+            int choice{ input<int>("Please enter an integer.") };
+            
+            switch (choice){
+                case 1:{
+                    cat.load();
+                    cat.save("deez.cat");
+                    break;
+                }
+                case 2:{
+                    // cat.create
+                }
+                    
+                default:
+                    throw std::invalid_argument("Please input a listed integer.");
             }
-                
-            default:
-                looping=true;
-                std::cout<<"Please input a listed integer."<<std::endl;
-            }
-        
         }
+        catch(std::exception& error){
+            looping=true;
+            std::cout<<error.what()<<'\n'<<'\n';
+        }
+
+    }
+
  //#################################################
 
-    // astronomical_object ao{"ao", 10, EMPTY_STRING_VECTOR, "father"};
-
-    // star_1.set_mass(1);
-    // star_1.set_parent("sda");
-    // star_1.set_spectral_type('O');
-    // star_1.set_relative_magnitude(3);
-
-    // galaxy galaxy_1{"galaxy_1"};
-    // galaxy_1.set_mass(1e8);
-    // galaxy_1.set_hubble_type("E3");
-
-    // star star_1{"star_1"};
-    // galaxy galaxy_1{"galaxy_1"};
+    // star* star_ptr = new star("star_1");
+    // galaxy* galaxy_ptr = new galaxy("galaxy_1");
     // catalogue cat;
-    // cat.add_object(star_1);
-    // cat.add_object(galaxy_1);
+    // cat.add_object(star_ptr);
+    // cat.add_object(galaxy_ptr);
     // std::cout<<cat;
-    // std::cout<<hooray<<std::endl;
-
-    // std::cout<<ao<<std::endl;
-    // std::cout<<star_1<<std::endl;
-
-    // cat.add_object(ao);
-    // cat.add_object(star_1);
-    // cat.add_object(galaxy_1);
-    // std::cout<<cat["star_1"];
-
-    // cat.save("catalogue.cat"); // if fails should print failed!!
-    // cat.load_from_file("catalogue.cat");
-
-    // std::cout<<cat;
-
-    // std::string string{"name: a_name"};
-    // std::string name;
-    
-    // catalogue cat_2;
-    // cat_2.load("catalogue.cat");
     
     return 0;
 }
