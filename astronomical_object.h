@@ -5,6 +5,9 @@
 #include<vector>
 #include<string>
 #include<fstream>
+#include<functional>
+#include"io_functions.h"
+
 
 
 class astronomical_object 
@@ -32,6 +35,44 @@ public:
     void populate(std::ifstream& file, int& line_counter);
     void populate_base(std::ifstream& file, int& line_counter);
     virtual void populate_derived(std::ifstream& file, int& line_counter)=0;
+
+    void populate();
+    void populate_base();
+    // virtual void populate_derived()=0;
+
+    template<typename T>
+    void prompt_and_set(const std::string prompt, std::function<void(T)> setter);
+
+    template<typename T>
+    void read_line_and_set(std::ifstream& file, const std::string& variable_name, std::function<void(T)> setter, int& line_number);
+
 };
 
+
+// prompts user for an input, then runs function with that input. Repeats until function runs without throwing an error.
+template<typename T>
+void astronomical_object::prompt_and_set(const std::string prompt, std::function<void(T)> setter)
+{
+    bool looping{true};
+    T output;
+
+    while (looping) {
+        looping = false;
+        try {
+            setter( input<T>(prompt) );
+        }
+        catch (std::exception error) {
+            looping = false;
+            std::cout<<error.what()<<std::endl;
+        }
+    }
+}
+
+template<typename T>
+void astronomical_object::read_line_and_set(std::ifstream& file, const std::string& variable_name, void (astronomical_object::*setter)(T), int& line_number)
+{   
+    T new_value;
+    read_line_into_var(file, variable_name, new_value, line_number);
+    setter(new_value);
+}
 #endif
