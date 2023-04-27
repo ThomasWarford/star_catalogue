@@ -62,5 +62,30 @@ void astronomical_object::populate_base(std::ifstream& file, int& line_counter)
     double new_mass;
     read_line_into_var(file, GET_VARIABLE_NAME(mass), new_mass, line_counter);
     set_mass(new_mass);
+    // read_line_and_set<double>(
+    //     file,
+    //     "mass",
+    //     &astronomical_object::set_mass,
+    //     line_counter
+    // );
+    // (file, "mass", &astronomical_object::set_mass, line_counter);
 }
+
+void astronomical_object::populate()
+{
+    populate_base();
+    // populate_derived(); add
+}
+
+void astronomical_object::populate_base()
+{
+    // double mass(<double>(prompt));
+    // read_line_and_set(mass)
+    prompt_and_set<double>(
+        "mass: ",
+        &astronomical_object::set_mass
+    );
+    std::cout<<"uhh";
+}
+
 

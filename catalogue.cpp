@@ -5,10 +5,6 @@
 #include"star.h"
 #include"galaxy.h"
 
-catalogue::~catalogue()
-{
-    // for (auto ptr : object_ptrs){delete ptr.second;} 
-}
 
 void catalogue::add_object(std::unique_ptr<astronomical_object> object)
 {   
@@ -20,19 +16,59 @@ void catalogue::add_object(std::unique_ptr<astronomical_object> object)
     }
 }
 
-// void add_object()
-// {
-//     std::cout<<"Enter the following:"
-//     std::cout<<"name: "
-    
-//     std::string input_string;
-// }
-
-
-astronomical_object& catalogue::operator[](std::string index)
+void catalogue::add_object()
 {
-    return *object_ptrs[index];
+    std::string name{ input<std::string>("name: ") };
+
+    while( object_ptrs.find(name) != object_ptrs.end() ){
+        std::cout<<name<<" is already in the catalogue. Enter a different name. \n";
+        std::string name{ input<std::string>("name: ") };
+    }
+
+    std::string type_string;
+    type_cases type_enum;
+    // while (type_cases_map.find(type_string) != type_cases_map.end()){
+    //     type_string = input<std::string>("type: ");
+    // }
+    bool looping{true};
+    while (looping) {
+        looping = false;
+        type_string = input<std::string>("type: ");
+        
+        // try to get type_cases member corresponding with entered string
+        try {
+            type_enum = get_type_enum(type_string);
+        }
+        catch (std::invalid_argument error) {  
+            std::cout<<error.what();
+            looping=true;
+        }
+    }
+
+    std::unique_ptr<astronomical_object> new_object_ptr;
+
+    switch(type_enum){
+        case is_star:
+            std::cout<<"*star*";
+            new_object_ptr = std::unique_ptr<astronomical_object>( new star(name) ); 
+            break;
+
+        case is_galaxy:
+            std::cout<<"*galaxy*";
+            break;
+        default:
+            break;
+    }
+
+
+    new_object_ptr->populate();
 }
+
+
+// astronomical_object& catalogue::operator[](std::string index)
+// {
+//     return *object_ptrs[index];
+// }
 
 std::ostream& operator<<(std::ostream& os, const catalogue& outputted_catalogue)
 {
@@ -52,14 +88,14 @@ void catalogue::save(std::string file_name) const
     file.close();
 }
 
-type_cases catalogue::get_type_enum(std::string type_string) const
-{
-    std::map<std::string, type_cases> type_cases_map{{"star", type_cases::is_star}, {"galaxy", type_cases::is_galaxy}};
-    if (type_cases_map.find(type_string) == type_cases_map.end()) {
-        throw std::invalid_argument("Invalid astronomical object type: " + type_string);
+catalogue::type_cases catalogue::get_type_enum(std::string type_string) const
+{   
+    auto iterator{type_cases_map.find(type_string)};
+    if (iterator == type_cases_map.end()) {
+        throw std::invalid_argument("Invalid astronomical object type: " + type_string + "\n");
     }
 
-    return type_cases_map[type_string];
+    return iterator->second;
 }
 
 void catalogue::load(std::string file_name)
@@ -123,8 +159,7 @@ void catalogue::load(std::string file_name)
 
 void catalogue::load()
 {
-    std::cout << "Please enter a file name."<<std::endl;
-    std::string file_name{ input<std::string>("File name should be a string without spaces.") };
+    std::string file_name{ input<std::string>("Please enter a file name without spaces.\n") };
     load(file_name);
     std::cout << file_name << " loaded."<<std::endl;
 }
