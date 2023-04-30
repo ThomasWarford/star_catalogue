@@ -55,6 +55,7 @@ void catalogue::add_object()
 
         case is_galaxy:
             std::cout<<"*galaxy*";
+            new_object_ptr = std::unique_ptr<astronomical_object>( new galaxy(name) ); 
             break;
         default:
             break;
@@ -62,6 +63,7 @@ void catalogue::add_object()
 
 
     new_object_ptr->populate();
+    add_object(std::move(new_object_ptr));
 }
 
 
@@ -80,12 +82,18 @@ std::ostream& operator<<(std::ostream& os, const catalogue& outputted_catalogue)
     return os;
 }
 
-void catalogue::save(std::string file_name) const
+void catalogue::save(std::string& file_name) const
 {
     std::ofstream file;
     file.open(file_name, std::ios::out);
     file << (*this);
     file.close();
+}
+
+void catalogue::save() const
+{
+    std::string file_name{ input<std::string>("Enter a file name without spaces (the file will be overwritten.)\n") };
+    save(file_name);
 }
 
 catalogue::type_cases catalogue::get_type_enum(std::string type_string) const
@@ -98,7 +106,7 @@ catalogue::type_cases catalogue::get_type_enum(std::string type_string) const
     return iterator->second;
 }
 
-void catalogue::load(std::string file_name)
+void catalogue::load(std::string& file_name)
 {   
     int number_of_objects{get_number_of_objects(file_name)};
     catalogue new_catalogue;
@@ -113,6 +121,9 @@ void catalogue::load(std::string file_name)
     try{
         for (int i{0}; i<number_of_objects; i++) {
             read_line_into_var(file, GET_VARIABLE_NAME(name), name, line_counter);
+            if (object_ptrs.count(name)){
+                throw std::invalid_argument("Object with name "+name+" already exists.\n");
+            }
             read_line_into_var(file, GET_VARIABLE_NAME(type), type, line_counter);
 
             std::unique_ptr<astronomical_object> new_object_ptr;
@@ -135,7 +146,8 @@ void catalogue::load(std::string file_name)
             } 
 
             new_object_ptr->populate(file, line_counter);
-            new_catalogue.add_object(std::move(new_object_ptr));      
+            new_catalogue.add_object(std::move(new_object_ptr));  
+            // add_object(std::move(new_object_ptr)); 
 
             line_counter++;
             std::getline(file, line_string);
@@ -147,7 +159,12 @@ void catalogue::load(std::string file_name)
         // for (auto ptr : object_ptrs){delete ptr.second;} 
         // object_ptrs.clear();
         
-        object_ptrs = std::move(new_catalogue.object_ptrs);
+        // object_ptrs = std::move(new_catalogue.object_ptrs);
+        object_ptrs.insert(
+            std::make_move_iterator(new_catalogue.object_ptrs.begin()),
+            std::make_move_iterator(new_catalogue.object_ptrs.end())
+            );
+
     }
     catch(std::exception& error){
         std::stringstream error_message;
@@ -192,6 +209,6 @@ int catalogue::get_number_of_objects(std::string file_name) const
 }
 
 
-// template function taking line and checking it follows "name: type" format, returning value of type 
+// template function taking line and checking it follows "name: type" format, returning value of type
 
 

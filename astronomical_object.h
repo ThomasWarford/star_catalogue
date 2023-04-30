@@ -7,6 +7,8 @@
 #include<fstream>
 #include<functional>
 #include"io_functions.h"
+#include<set>
+
 
 
 
@@ -24,7 +26,6 @@ private:
 public: 
     virtual std::ostream& print_derived(std::ostream& os) const = 0;
     inline astronomical_object(std::string name): name{name}{};
-    // astronomical_object(std::string name, double mass, std::vector<std::string> children=std::vector<std::string>(), std::string parent="");
     void set_mass(double mass);
     void set_children(std::vector<std::string> new_children);
     void set_parent(std::string new_parent);
@@ -38,51 +39,14 @@ public:
 
     void populate();
     void populate_base();
-    // virtual void populate_derived()=0;
+    virtual void populate_derived()=0;
 
-    // template<typename T>
-    // void prompt_and_set(const std::string prompt, std::function<void(T)> setter);
+    void prompt_and_read_into_var(const std::string &quantity_name, double& variable, const double lower_bound, const double upper_bound);
+    void prompt_and_read_into_var(const std::string &quantity_name, std::string& variable, const std::set<std::string>& allowed_values);
+    void prompt_and_read_into_var(const std::string &quantity_name, char& variable, const std::set<char>& allowed_values);
 
-    // template<typename T>
-    // void read_line_and_set(std::ifstream& file, const std::string& variable_name, std::function<void(T)> setter, int& line_number);
-
-    template<typename T>
-    void prompt_and_set(const std::string& prompt, void (astronomical_object::*setter)(T))
-    {
-        bool looping{true};
-        T output;
-
-        while (looping) {
-            looping = false;
-            try {
-                (this->*setter)( input<T>(prompt) );
-            }
-            catch (std::exception error) {
-                looping = false;
-                std::cout<<error.what()<<std::endl;
-            }
-        }
-    }
 };
 
 
-// prompts user for an input, then runs function with that input. Repeats until function runs without throwing an error.
-// template<typename T>
-// void astronomical_object::prompt_and_read_into_var(const std::string prompt, std::function<void(T)> setter)
-// {
-//     bool looping{true};
-//     T output;
 
-//     while (looping) {
-//         looping = false;
-//     }
-// }
-
-// template<typename T>
-// void astronomical_object::read_line_and_set(std::ifstream& file, const std::string& variable_name, void (astronomical_object::*setter)(T), int& line_number)
-// {   
-//     T new_value;
-//     read_line_into_var(file, variable_name, new_value, line_number);
-//     setter(new_value);
-// }
 #endif
