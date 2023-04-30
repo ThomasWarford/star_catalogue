@@ -72,6 +72,21 @@ void catalogue::add_object()
 //     return *object_ptrs[index];
 // }
 
+void catalogue::remove_object(std::string& name)
+{
+    if (!object_ptrs.erase(name)){
+        throw std::invalid_argument("Object with name "+name+" does not exist.\n");
+    }
+}
+
+void catalogue::remove_object()
+{
+    std::string name{ input<std::string>("Name of object to remove: ") };
+
+    remove_object(name);
+    std::cout<<"Object with name "<<name<<" removed.\n";
+}
+
 std::ostream& operator<<(std::ostream& os, const catalogue& outputted_catalogue)
 {
     for (auto const& key_value: outputted_catalogue.object_ptrs) {

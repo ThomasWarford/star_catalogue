@@ -43,6 +43,7 @@ int main()
             looping=true;
             std::cout<<error.what()<<'\n'<<'\n';
         }
+        wait_for_enter();
     }
 
     looping =true;
@@ -84,7 +85,7 @@ int main()
                     break;
                 }
                 case 6:{ // remove an object
-                    std::cerr<<"NOT IMPLEMENTED";
+                    cat.remove_object();
                     break;
                 }
                 case 7:{ // create children subcatalogue
@@ -104,6 +105,7 @@ int main()
             looping=true;
             std::cout<<error.what()<<'\n'<<'\n';
         }
+        wait_for_enter();
     }
 
  //#################################################

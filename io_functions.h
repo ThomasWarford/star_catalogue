@@ -5,29 +5,18 @@
 #include<fstream>
 #include<iostream> // only for debugging!
 #include<iomanip>
+#include<limits>
 
 #define GET_VARIABLE_NAME(variable) (#variable)
 
 const int WIDTH{24};
 
 
-// template<typename T>
-// void read_line_into_var(std::string line_string, std::string variable_name, T& variable)
-// {   
-//     std::stringstream ss{line_string};
-//     std::string first_string;
-//     if ((ss>>first_string>>variable) and (!(ss>>line_string))){ // check remainder of line is empty
-//         if ((first_string==variable_name+":")){ // check name is as expected
-//             return;
-//         }
-//     }
-//     std::stringstream error_message;
-//     error_message << "Expected line to take form:" <<std::endl;
-//     error_message << variable_name<<":   "<<"\"value\" (type:"<<typeid(T).name()<<")."<<std::endl;
-
-//     throw std::invalid_argument(error_message.str());
-// }
-
+inline void wait_for_enter()
+{
+    std::cout << "Press Enter to Continue\n";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+}
 
 template<typename T>
 void print_table_row(std::ostream& os, const std::string& variable_name, const T& variable)
@@ -64,15 +53,30 @@ T input(std::string prompt)
 {   
     std::string line_string;
     T output;
-
+    std::cout<<prompt;
     while (std::getline(std::cin, line_string)) {
         std::stringstream ss{line_string};
         if ((ss>>output) && !(ss>>line_string)){
             return output;
         }
-        std::cout<<prompt<<std::endl;
+        std::cout<<prompt;
     }
     return 0; // to avoid compiler warning, shouldn't be read.
 }
+
+// template<typename T>
+// T prompt_variable_input(std::string variable_name, T variable)
+// {   
+//     error_message
+//     while (std::getline(std::cin, line_string)) {
+//         std::stringstream ss{line_string};
+//         if ((ss>>output) && !(ss>>line_string)){
+//             return output;
+//         }
+//         std::cout<<prompt<<std::endl;
+//     }
+//     return 0; // to avoid compiler warning, shouldn't be read.
+// }
+
 
 #endif

@@ -23,6 +23,8 @@ public:
     // std::pair<std::map<std::string, astronomical_object*>::iterator, bool> add_object(astronomical_object* object_ptr)
     void add_object(std::unique_ptr<astronomical_object> object);
     void add_object();
+    void remove_object(std::string& name);
+    void remove_object();
     // astronomical_object& operator[](std::string);
     friend std::ostream& operator<<(std::ostream& os, const catalogue& outputted_catalogue);
     // returns 1 and cancels if file already exists
