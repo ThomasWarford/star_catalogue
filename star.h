@@ -26,7 +26,7 @@ public:
     void set_spectral_type(char new_spectral_type);
     void set_relative_magnitude(double new_relative_magnitude);
     void populate_derived(std::ifstream& file, int& line_counter) override;
-    void populate_derived() override;
+    void populate_derived(bool indent) override;
 
 };
 

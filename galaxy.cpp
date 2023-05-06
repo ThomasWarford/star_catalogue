@@ -1,6 +1,6 @@
 #include<set>
 #include"galaxy.h"
-#include"io_functions.h"
+#include"functions.h"
 
 void galaxy::set_hubble_type(std::string new_hubble_type)
 {
@@ -26,9 +26,9 @@ void galaxy::populate_derived(std::ifstream& file, int& line_counter)
     set_hubble_type(new_hubble_type);
 }
 
-void galaxy::populate_derived()
+void galaxy::populate_derived(bool indent)
 {
     std::string new_hubble_type;
-    prompt_and_read_into_var("hubble_type", new_hubble_type, allowed_hubble_galaxy_types);
+    prompt_and_read_into_var("hubble_type", new_hubble_type, allowed_hubble_galaxy_types, indent);
     set_hubble_type(new_hubble_type);
 }

@@ -1,7 +1,7 @@
 #include<iostream>
 #include<sstream>
 #include"astronomical_object.h"
-#include"io_functions.h"
+#include"functions.h"
 
 std::ostream& astronomical_object::print_base(std::ostream& os) const
 {
@@ -18,6 +18,12 @@ std::ostream& operator<<(std::ostream& os, const astronomical_object& output_ast
     print_table_row(os, "mass", output_astronomical_object.mass);
     
     output_astronomical_object.print_derived(os);
+
+    os << std::left << std::setw(WIDTH) << std::setfill(' ') << "children";
+    for (auto child : output_astronomical_object.children) {
+        os << child << "  ";
+    }
+    os<<'\n';
     return os;
 }
 
@@ -38,14 +44,7 @@ void astronomical_object::check_range_error(std::string quantity_name, double lo
 }
 
 
-void astronomical_object::set_children(std::vector<std::string> new_children)
-{
-    children = new_children;
-}
-void astronomical_object::set_parent(std::string new_parent)
-{
-    parent = new_parent;
-}
+
 
 void astronomical_object::populate(std::ifstream& file, int& line_counter)
 {   
@@ -59,26 +58,26 @@ void astronomical_object::populate_base(std::ifstream& file, int& line_counter)
     set_mass(new_mass);
 }
 
-void astronomical_object::populate()
+void astronomical_object::populate(bool indent)
 {
-    populate_base();
-    populate_derived();
+    populate_base(indent);
+    populate_derived(indent);
 }
 
-void astronomical_object::populate_base()
+void astronomical_object::populate_base(bool indent)
 {
     double new_mass;
-    prompt_and_read_into_var("mass", new_mass, mass_bound_lower(), mass_bound_upper());
+    prompt_and_read_into_var("mass", new_mass, mass_bound_lower(), mass_bound_upper(), indent);
     set_mass(new_mass);
 }
 
-void astronomical_object::prompt_and_read_into_var(const std::string &quantity_name, double& variable, const double lower_bound, const double upper_bound)
+void astronomical_object::prompt_and_read_into_var(const std::string &quantity_name, double& variable, const double lower_bound, const double upper_bound, bool indent)
 {   
     double output;
     bool looping{true};
     while (looping) {
         looping=false;
-        output = input<double>(quantity_name+": ");
+        output = input<double>(quantity_name+": ", indent=indent);
         
         try{
             check_range_error(quantity_name, lower_bound, upper_bound, output);
@@ -91,12 +90,15 @@ void astronomical_object::prompt_and_read_into_var(const std::string &quantity_n
     }
 }
 
-void astronomical_object::prompt_and_read_into_var(const std::string &quantity_name, std::string& variable, const std::set<std::string>& allowed_values)
+
+
+
+void astronomical_object::prompt_and_read_into_var(const std::string &quantity_name, std::string& variable, const std::set<std::string>& allowed_values, bool indent)
 {
     std::string output;
     bool looping{true};
     while (looping) {
-        output = input<std::string>(quantity_name+": ");
+        output = input<std::string>(quantity_name+": ", indent=indent);
 
         if (allowed_values.count(output)){
             looping=false;
@@ -116,12 +118,12 @@ void astronomical_object::prompt_and_read_into_var(const std::string &quantity_n
     }
 }
 
-void astronomical_object::prompt_and_read_into_var(const std::string &quantity_name, char& variable, const std::set<char>& allowed_values)
+void astronomical_object::prompt_and_read_into_var(const std::string &quantity_name, char& variable, const std::set<char>& allowed_values, bool indent)
 {
     char output;
     bool looping{true};
     while (looping) {
-        output = input<char>(quantity_name+": ");
+        output = input<char>(quantity_name+": ", indent=indent);
 
         if (allowed_values.count(std::toupper(output))){
             looping=false;

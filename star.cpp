@@ -1,6 +1,6 @@
 #include<set>
 #include"star.h"
-#include"io_functions.h"
+#include"functions.h"
 
 // star::star( std::string name, double mass, char spectral_type, double relative_magnitude, std::vector<std::string> children, std::string parent) : astronomical_object{name, mass, children, parent}, spectral_type{(char)std::toupper(spectral_type)}, relative_magnitude{relative_magnitude}
 // {   
@@ -65,13 +65,13 @@ void star::populate_derived(std::ifstream& file, int& line_counter)
     set_relative_magnitude(new_relative_magnitude);
 }
 
-void star::populate_derived()
+void star::populate_derived(bool indent)
 {
     char new_spectral_type;
-    prompt_and_read_into_var("spectral_type", new_spectral_type, allowed_spectral_types);
+    prompt_and_read_into_var("spectral_type", new_spectral_type, allowed_spectral_types, indent);
     set_spectral_type(new_spectral_type);
 
     double new_relative_magnitude;
-    prompt_and_read_into_var("relative_magnitude", new_relative_magnitude, relative_magnitude_lower, relative_magnitude_upper);
+    prompt_and_read_into_var("relative_magnitude", new_relative_magnitude, relative_magnitude_lower, relative_magnitude_upper, indent);
     set_relative_magnitude(new_relative_magnitude);
 }

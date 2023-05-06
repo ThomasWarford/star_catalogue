@@ -20,7 +20,7 @@ public:
     galaxy(std::string name): astronomical_object{name} {}
     void set_hubble_type(std::string new_hubble_type);
     void populate_derived(std::ifstream& file, int& line_counter) override;
-    void populate_derived() override;
+    void populate_derived(bool indent) override;
 
 };
 

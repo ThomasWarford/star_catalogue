@@ -1,6 +1,8 @@
-#include<fstream>
 #include<sstream>
-#include"io_functions.h"
+#include<fstream>
+#include<algorithm>
+#include<iterator>
+#include"functions.h"
 #include"catalogue.h"
 #include"star.h"
 #include"galaxy.h"
@@ -19,12 +21,11 @@ void catalogue::add_object(std::unique_ptr<astronomical_object> object)
 void catalogue::add_object()
 {
     std::string name{ input<std::string>("name: ") };
+    add_object(name);
+}
 
-    while( object_ptrs.find(name) != object_ptrs.end() ){
-        std::cout<<name<<" is already in the catalogue. Enter a different name. \n";
-        std::string name{ input<std::string>("name: ") };
-    }
-
+void catalogue::add_object(std::string& name, bool second_call)
+{
     std::string type_string;
     type_cases type_enum;
     // while (type_cases_map.find(type_string) != type_cases_map.end()){
@@ -33,7 +34,7 @@ void catalogue::add_object()
     bool looping{true};
     while (looping) {
         looping = false;
-        type_string = input<std::string>("type: ");
+        type_string = input<std::string>("type: ", second_call);
         
         // try to get type_cases member corresponding with entered string
         try {
@@ -62,15 +63,46 @@ void catalogue::add_object()
     }
 
 
-    new_object_ptr->populate();
+    new_object_ptr->populate(second_call); // indent prompting if second call
+
+    if (!second_call){
+        set_object_children(new_object_ptr);
+    }
+
     add_object(std::move(new_object_ptr));
 }
 
+void catalogue::set_object_children(std::unique_ptr<astronomical_object>& parent_object)
+{
+    std::string child_name;
 
-// astronomical_object& catalogue::operator[](std::string index)
-// {
-//     return *object_ptrs[index];
-// }
+    while (true){
+        child_name = input<std::string>("Enter the name of a child object of parent "+parent_object->get_name()+ " (or enter nothing to stop): ");
+        
+        if (child_name==parent_object->get_name()) {
+            std::cout<<"Object cannot be its own child.\n";
+            continue;
+        }
+
+        if (child_name.empty()){ // Exit when the user presses enter
+            return;
+
+        }
+        if (object_ptrs.find(child_name) == object_ptrs.end()){ // if child is not in the catalogue
+            std::cout<<child_name<<" is not in the catalogue.\n";
+            if (yes_or_no("Create a new child "+child_name+" of parent "+parent_object->get_name()+ "?")){
+                parent_object->add_child(child_name);
+                add_object(child_name, true); // second_call = true to prevent 'grandparent' being created again as child
+            }
+            else{
+                std::cout<<"Child "+child_name+" not added to parent "+parent_object->get_name()+".\n";
+            }
+        }
+        else { // if child is in the catalogue
+            parent_object->add_child(child_name);
+        }
+    }
+}
 
 void catalogue::remove_object(std::string& name)
 {
@@ -121,9 +153,54 @@ catalogue::type_cases catalogue::get_type_enum(std::string type_string) const
     return iterator->second;
 }
 
+std::set<std::string> catalogue::read_children(std::ifstream& file, int& line_number) const
+{
+    line_number++;
+    std::set<std::string> children;
+
+    std::string line_string;
+    std::getline(file, line_string);
+    std::stringstream ss{line_string};
+    std::string first_string;
+    std::string child_name;
+
+    if ((ss>>first_string) && (first_string=="children")){ 
+        while(ss>>child_name){
+            if (!children.insert(child_name).second) { // returns true if successful
+                throw std::invalid_argument("Duplicate child name: "+child_name+"\n");
+            }
+        }
+    }
+    else {
+        throw std::invalid_argument("Expected line to take form: children   child_name_1    child_name_2 ...\n");
+    }
+
+    return children;
+}
+
+// bool catalogue::any_names_in_catalogue(const std::set<std::string>& names)
+// {
+//     auto it = std::find_first_of(object_ptrs.begin(), object_ptrs.end(), names.begin(), names.end(),
+//                                 [](const std::pair<const std::string, std::unique_ptr<astronomical_object>>& map_pair, const std::string& set_value) {
+//                                     return map_pair.first == set_value;
+//                                 });
+
+//     return it != object_ptrs.end();
+// }
+
+
+
 void catalogue::load(std::string& file_name)
 {   
-    int number_of_objects{get_number_of_objects(file_name)};
+    auto [number_of_objects, object_names]{get_number_of_objects_and_names(file_name)};
+    
+    // Puts keys of object_ptrs into object_names:
+    std::transform(
+        object_ptrs.begin(), object_ptrs.end(),
+        std::inserter(object_names, object_names.end()),
+        [](auto& pair){ return pair.first; }
+        );
+
     catalogue new_catalogue;
     std::ifstream file;
     file.open(file_name);
@@ -161,8 +238,34 @@ void catalogue::load(std::string& file_name)
             } 
 
             new_object_ptr->populate(file, line_counter);
+            std::set<std::string> children{read_children(file, line_counter)};
+            
+            // Check that object is not its own child:
+            if (children.count(name)) {
+                throw std::invalid_argument("Object with name "+name+" cannot be a child of itself.\n");
+            }
+
+            // Check that children is a subset of all object names:
+            if (!std::includes(object_names.begin(), object_names.end(), children.begin(), children.end())){
+                std::stringstream error_message;
+                error_message<<"Children names: ";
+
+                for (auto child : children) {
+                    std::cout<<child<<std::endl;
+                    if (!object_names.count(child)){
+                        error_message<<child<<", ";
+                    }
+                }
+
+                error_message<<"do not exist in catalogue or file.\n";
+                error_message<<"Create objects with these names first.\n";
+                throw std::invalid_argument(error_message.str());
+            }
+
+            new_object_ptr->set_children(children);
             new_catalogue.add_object(std::move(new_object_ptr));  
-            // add_object(std::move(new_object_ptr)); 
+            
+
 
             line_counter++;
             std::getline(file, line_string);
@@ -196,13 +299,14 @@ void catalogue::load()
     std::cout << file_name << " loaded."<<std::endl;
 }
 
-int catalogue::get_number_of_objects(std::string file_name) const
+std::pair<int, std::set<std::string>> catalogue::get_number_of_objects_and_names(std::string file_name) const
 {
     std::ifstream file;
     file.open(file_name);
     std::string line_string;
     int line_counter{0};
     int object_counter{0};
+    std::set<std::string> object_names;
 
 
     if (!file.good()){
@@ -213,14 +317,22 @@ int catalogue::get_number_of_objects(std::string file_name) const
     while (std::getline(file, line_string)) {
         line_counter++;
         std::string first_word_of_line;
+        std::string second_word_of_line;
         std::stringstream line_stream{line_string};
         if ((line_stream >> first_word_of_line) && (first_word_of_line=="name")) {
-            object_counter++;
+            if (line_stream>>second_word_of_line) {
+                object_counter++;
+                object_names.insert(second_word_of_line);
+            }
+            else{
+                throw std::invalid_argument("Line "+std::to_string(line_counter)+": name is missing.");
+            }
+
         }
     }
 
     file.close();
-    return object_counter;
+    return std::pair<int, std::set<std::string>>{object_counter, object_names};
 }
 
 

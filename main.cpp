@@ -6,7 +6,7 @@
 #include"galaxy.h"
 #include"star.h"
 #include"catalogue.h"
-#include"io_functions.h"
+#include"functions.h"
 
 const std::vector<std::string> EMPTY_STRING_VECTOR = std::vector<std::string>();
 

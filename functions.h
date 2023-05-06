@@ -1,22 +1,35 @@
-#ifndef IO_FUNCTIONS
-#define IO_FUNCTIONS
+#ifndef FUNCTIONS
+#define FUNCTIONS
 
 #include<sstream>
 #include<fstream>
 #include<iostream> // only for debugging!
 #include<iomanip>
 #include<limits>
+#include<set>
+#include<map>
 
 #define GET_VARIABLE_NAME(variable) (#variable)
 
 const int WIDTH{24};
 
 
-inline void wait_for_enter()
-{
-    std::cout << "Press Enter to Continue\n";
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
-}
+void wait_for_enter();
+bool common_element(const std::set<std::string>& set1, const std::set<std::string>& set2);
+
+// Checks that a key in map exists in set
+// template<typename T>
+// bool common_element(const std::set<std::string>& set, const std::map<std::string, T>& map)  
+// {
+//     auto it = std::find_first_of(map.begin(), map.end(), set.begin(), set.end(),
+//                                 [](const std::pair<int, std::string>& map_pair, const int& set_value) {
+//                                     return map_pair.first == set_value;
+//                                 });
+//     return it != map.end();
+// }
+
+bool yes_or_no(const std::string& prompt);
+
 
 template<typename T>
 void print_table_row(std::ostream& os, const std::string& variable_name, const T& variable)
@@ -49,19 +62,23 @@ void read_line_into_var(std::ifstream& file, const std::string& variable_name, T
 }
 
 template<typename T>
-T input(std::string prompt)
+T input(std::string prompt, bool indent=false)
 {   
+    prompt = std::string(int(indent), '\t') + prompt;
     std::string line_string;
     T output;
     std::cout<<prompt;
     while (std::getline(std::cin, line_string)) {
+        if (line_string.empty()) { // if the user inputs nothing
+            return T{}; // return an empty T object
+        }
         std::stringstream ss{line_string};
         if ((ss>>output) && !(ss>>line_string)){
             return output;
         }
         std::cout<<prompt;
     }
-    return 0; // to avoid compiler warning, shouldn't be read.
+    return output; // to avoid compiler warning, shouldn't be called.
 }
 
 // template<typename T>
