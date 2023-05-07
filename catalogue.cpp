@@ -186,11 +186,30 @@ std::vector<std::string> catalogue::get_indices() const
             }
     }
 
+    sort_indices(indices);
+
+    return indices;
+}
+
+std::vector<std::string> catalogue::get_parent_indices() const
+{
+    std::vector<std::string> indices;
+    for (auto& key_value: object_ptrs) {
+        if ( !(key_value.second->get_children().empty()) ) {
+            indices.push_back(key_value.first);
+        }
+    }
+
+    return indices;
+}
+
+std::vector<std::string>& catalogue::sort_indices(std::vector<std::string>& indices) const
+{
     std::cout<<"How would you like to sort the objects?\n";
 
     std::set<std::string> sort_by_options{"mass", "type", "string"};
     
-    looping = true;
+    bool looping{true};
     std::string sort_by;
     while (looping){
         std::cout<<"You can sort by mass, name or type (entering nothing will sort by name.\n";
@@ -216,37 +235,49 @@ std::vector<std::string> catalogue::get_indices() const
 
     return indices;
 }
-// // Functions which picks out indices corresponding with year 1, 2, 3 or 4 courses.
-// // This funciton then sorts the selected courses by numbers.
-// std::vector<int> get_indices(int year, std::vector<int> numbers)
-// {
-//   std::vector<int> idx(numbers.size());
-//   std::iota(idx.begin(), idx.end(), 0);
-//   if (year) {
-//     std::vector<int>::iterator bin_idx{ std::remove_if(idx.begin(), idx.end(), [&](int i){return (get_first_digit(numbers[i]) != year);}) };
-//     idx.erase(bin_idx, idx.end());
-//   }
-  
-//   std::sort(idx.begin(), idx.end(), [&](int i, int j){ return (numbers[i]<numbers[j]); });
 
-//   return idx;
-// }
+void catalogue::print_children() const
+{
+    bool looping{true};
+    std::string name;
+    std::vector<std::string> parents{get_parent_indices()};
+
+    if (parents.empty()){
+        std::cout<<"There are no parents in the catalogue.\n";
+        return;
+    }
 
 
-// // This funciton then sorts the selected courses by name.
-// std::vector<int> get_indices(int year, std::vector<int> numbers, std::vector<std::string> names)
-// {
-//   std::vector<int> idx(numbers.size());
-//   std::iota(idx.begin(), idx.end(), 0);
-//   if (year) {
-//     std::vector<int>::iterator bin_idx{ std::remove_if(idx.begin(), idx.end(), [&](int i){return (get_first_digit(numbers[i]) != year);}) };
-//     idx.erase(bin_idx, idx.end());
-//   }
-  
-//   std::sort(idx.begin(), idx.end(), [&](int i, int j){ return (names[i]<names[j]); });
 
-//   return idx;
-// }
+    while(looping) {
+        std::cout<<"The available parents are:";
+        for (auto& parent: parents){
+            std::cout<<" "<<parent;
+        }
+        std::cout<<".\n";
+        name = input<std::string>("Enter a parent name: ");
+        if (std::find(parents.begin(), parents.end(), name) == parents.end()) {
+            looping = true;
+            std::cout<<name<<" is not a parent.\n";
+        }
+        else {
+            looping = false;
+        }
+    }
+
+    std::set<std::string> children = object_ptrs.at(name)->get_children();
+
+    if (children.empty()) {
+        std::cout << name << " has no children!";
+        return;
+    }
+
+    std::vector<std::string> indices{children.begin(), children.end()};
+    
+    sort_indices(indices);
+
+    print(indices);
+}
 
 void catalogue::save(std::string& file_name) const
 {

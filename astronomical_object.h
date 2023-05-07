@@ -27,6 +27,7 @@ public:
     void set_mass(double mass);
     inline double get_mass(){return mass;}
     inline void set_children(std::set<std::string> new_children){children = new_children;}
+    inline std::set<std::string> get_children() const {return children;}
     inline void add_child(std::string new_child){children.insert(new_child);}
     inline void set_parent(std::string new_parent){parent=new_parent;}
     inline std::string get_name() {return name;}

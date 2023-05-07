@@ -56,8 +56,9 @@ int main()
             std::cout<<"4: Add additional object."<<std::endl;
             std::cout<<"5: Merge catalogue with another catalogue file."<<std::endl;
             std::cout<<"6: Remove an object."<<std::endl;
-            std::cout<<"7: Create a subcatalogue of an object's children (ie stars within a galaxy)."<<std::endl;
-            std::cout<<"8: Quit."<<std::endl;
+            std::cout<<"7: View children of object."<<std::endl;
+            std::cout<<"8: Select and sort objects."<<std::endl;
+            std::cout<<"9: Quit."<<std::endl;
 
 
 
@@ -88,10 +89,16 @@ int main()
                     cat.remove_object();
                     break;
                 }
-                case 7:{ // create children subcatalogue
+                case 7:{ // view children subcatalogue
+                    cat.print_children();
                     break;
                 }
-                case 8:{ // quit
+                case 8:{ // select and sort
+                    std::vector<std::string> indices = cat.get_indices();
+                    cat.print(indices);
+                    break;
+                }
+                case 9:{ // quit
                     looping=false;
                     std::cout<<"Thank you for using the catalogue."<<std::endl;
                     break;

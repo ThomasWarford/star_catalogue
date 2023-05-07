@@ -30,6 +30,9 @@ public:
     void remove_object(std::string& name);
     void remove_object();
     std::vector<std::string> get_indices() const;
+    std::vector<std::string>& sort_indices(std::vector<std::string>& indices) const;
+    void print_children() const;
+    std::vector<std::string> get_parent_indices() const;
     // astronomical_object& operator[](std::string);
     friend std::ostream& operator<<(std::ostream& os, const catalogue& outputted_catalogue);
     void print(std::vector<std::string>& indexes) const;

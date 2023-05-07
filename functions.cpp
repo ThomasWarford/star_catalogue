@@ -7,15 +7,20 @@ void wait_for_enter()
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
 }
 
-bool yes_or_no(const std::string& prompt) {
-    char answer{input<char>(prompt+" (y/n)")};
-    if (answer == 'y' || answer == 'Y'){
-        return true;
+bool yes_or_no(const std::string& prompt) 
+{
+    while (true) {
+        char answer{input<char>(prompt+" (y/n)")};
+
+        if (answer == 'y' || answer == 'Y'){
+            return true;
+        }
+
+        if (answer == 'n' || answer == 'N'){
+            return false;
+        }
+    
     }
-    if (answer == 'n' || answer == 'N'){
-        return false;
-    }
-    return yes_or_no(prompt);
 }
 
 bool common_element(const std::set<std::string>& set1, const std::set<std::string>& set2)
