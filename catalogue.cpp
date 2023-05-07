@@ -2,6 +2,7 @@
 #include<fstream>
 #include<algorithm>
 #include<iterator>
+#include<any>
 #include"functions.h"
 #include"catalogue.h"
 #include"star.h"
@@ -128,6 +129,124 @@ std::ostream& operator<<(std::ostream& os, const catalogue& outputted_catalogue)
 
     return os;
 }
+
+void catalogue::print(std::vector<std::string>& indexes) const
+{   
+    if (indexes.empty()){
+        for (auto& key_value: object_ptrs){
+            std::cout << *(key_value.second);
+            std::cout << '\n';
+        }
+    }
+    else{
+        for (auto& index: indexes) {
+            std::cout << *(object_ptrs.at(index));
+            std::cout << '\n';
+        }
+    }
+}
+
+std::vector<std::string> catalogue::get_indices() const
+{
+    std::cout<<"Would you like to print objects of a specific type?\n";
+
+    std::string type;    
+    bool looping{true};
+    while (looping){
+        std::cout<<"Allowed types are: ";
+        for (auto const& key_value: type_cases_map) {
+            std::cout<<key_value.first<<",";
+        }
+        std::cout<<"\nOr enter nothing to print all objects.\n";
+
+
+        type = input<std::string>("Type: ");
+
+        if (type_cases_map.find(type) != type_cases_map.end()) { // if type is in the map
+            looping = false;
+        }
+        if (type.empty()){ 
+            looping = false;
+        }    
+
+    }
+
+    std::vector<std::string> indices;
+
+    if (type.empty()){ // add all keys to indices
+        for (auto const& key_value: object_ptrs) {
+            indices.push_back(key_value.first);
+        }
+    }
+    else{ // add keys of specified type to indices
+        for (auto const& key_value: object_ptrs) {
+                if (key_value.second->type() == type) {
+                    indices.push_back(key_value.first);
+                }
+            }
+    }
+
+    std::cout<<"How would you like to sort the objects?\n";
+
+    std::set<std::string> sort_by_options{"mass", "type", "string"};
+    
+    looping = true;
+    std::string sort_by;
+    while (looping){
+        std::cout<<"You can sort by mass, name or type (entering nothing will sort by name.\n";
+        sort_by = input<std::string>("Sort by: ");
+
+        if (sort_by_options.find(sort_by) != sort_by_options.end()) { // if type is in the map
+            looping = false;
+        }
+        if (sort_by.empty()){ 
+            return indices;
+        }    
+    }
+
+    std::any lambda;
+    if (sort_by=="mass"){
+        std::sort(indices.begin(), indices.end(), [this](std::string& i, std::string& j){ return (object_ptrs.at(i)->get_mass() > object_ptrs.at(j)->get_mass()); }); 
+    }
+    if (sort_by=="type"){
+        std::sort(indices.begin(), indices.end(), [this](std::string& i, std::string& j){ return (object_ptrs.at(i)->type() < object_ptrs.at(j)->type()); }); 
+    }
+
+    // map is already sorted by name!
+
+    return indices;
+}
+// // Functions which picks out indices corresponding with year 1, 2, 3 or 4 courses.
+// // This funciton then sorts the selected courses by numbers.
+// std::vector<int> get_indices(int year, std::vector<int> numbers)
+// {
+//   std::vector<int> idx(numbers.size());
+//   std::iota(idx.begin(), idx.end(), 0);
+//   if (year) {
+//     std::vector<int>::iterator bin_idx{ std::remove_if(idx.begin(), idx.end(), [&](int i){return (get_first_digit(numbers[i]) != year);}) };
+//     idx.erase(bin_idx, idx.end());
+//   }
+  
+//   std::sort(idx.begin(), idx.end(), [&](int i, int j){ return (numbers[i]<numbers[j]); });
+
+//   return idx;
+// }
+
+
+// // This funciton then sorts the selected courses by name.
+// std::vector<int> get_indices(int year, std::vector<int> numbers, std::vector<std::string> names)
+// {
+//   std::vector<int> idx(numbers.size());
+//   std::iota(idx.begin(), idx.end(), 0);
+//   if (year) {
+//     std::vector<int>::iterator bin_idx{ std::remove_if(idx.begin(), idx.end(), [&](int i){return (get_first_digit(numbers[i]) != year);}) };
+//     idx.erase(bin_idx, idx.end());
+//   }
+  
+//   std::sort(idx.begin(), idx.end(), [&](int i, int j){ return (names[i]<names[j]); });
+
+//   return idx;
+// }
 
 void catalogue::save(std::string& file_name) const
 {

@@ -17,14 +17,15 @@ private:
     double mass;
     std::set<std::string> children;
     std::string parent;
-    virtual std::string type() const=0;
     virtual double mass_bound_lower() {return 0;}
     virtual double mass_bound_upper() {return 0;}
 
 public: 
+    virtual std::string type() const=0;
     virtual std::ostream& print_derived(std::ostream& os) const = 0;
     inline astronomical_object(std::string name): name{name}{};
     void set_mass(double mass);
+    inline double get_mass(){return mass;}
     inline void set_children(std::set<std::string> new_children){children = new_children;}
     inline void add_child(std::string new_child){children.insert(new_child);}
     inline void set_parent(std::string new_parent){parent=new_parent;}

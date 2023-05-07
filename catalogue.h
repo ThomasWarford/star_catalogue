@@ -29,8 +29,10 @@ public:
     void add_object();
     void remove_object(std::string& name);
     void remove_object();
+    std::vector<std::string> get_indices() const;
     // astronomical_object& operator[](std::string);
     friend std::ostream& operator<<(std::ostream& os, const catalogue& outputted_catalogue);
+    void print(std::vector<std::string>& indexes) const;
     // returns 1 and cancels if file already exists
     // void set_object_children(std::unique_ptr<astronomical_object> parent_object, std::vector<std::string>& children_names);
     void save(std::string& file_name) const;
