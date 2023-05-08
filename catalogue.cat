@@ -1,10 +1,19 @@
-name                    star_1                 
-type                    star                    
-mass                    1              
-spectral_type           O                       
-relative_magnitude      3                       
-
-name                    galaxy_1                
+name                    jeff                    
 type                    galaxy                  
-mass                    1e+08                   
-hubble_type             E3  
+right_ascension         12h35m3.3s              
+declination             -44°10′59.9943″  
+distance                1000  
+mass                    3e+08                   
+hubble_type             E1                      
+children                steve  
+
+name                    steve                   
+type                    star                    
+right_ascension         12h35m3.3s              
+declination             -44°10′59.9943″    
+distance                5
+mass                    20   
+relative_magnitude      9                       
+spectral_type           O                       
+children                
+

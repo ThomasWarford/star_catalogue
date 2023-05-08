@@ -8,7 +8,24 @@
 #include"catalogue.h"
 #include"functions.h"
 
-const std::vector<std::string> EMPTY_STRING_VECTOR = std::vector<std::string>();
+
+int main1()
+{
+    star jeff{"jeff"};
+
+    int hours;
+    int minutes;
+    double seconds;
+    while(true){
+        hours = input<int>("degrees");
+        minutes = input<int>("minutes");
+        seconds = input<double>("seconds");
+        jeff.set_declination(hours, minutes, seconds);
+        std::cout<<jeff.get_declination()<<std::endl;
+
+    }
+
+}
 
 int main() 
 {   

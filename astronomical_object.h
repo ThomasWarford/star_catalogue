@@ -13,14 +13,39 @@
 class astronomical_object 
 {
 private:
+    struct {
+        int hours;
+        int minutes;
+        double seconds;
+    } right_ascension;
+
+    struct {
+        int degrees;
+        int minutes;
+        double seconds;
+    } declination;
+
     const std::string name;
     double mass;
+    double distance;
     std::set<std::string> children;
     std::string parent;
     virtual double mass_bound_lower() {return 0;}
     virtual double mass_bound_upper() {return 0;}
 
+
+
+
 public: 
+    void set_distance(double new_distance);
+    void set_right_ascension(int hours, int minutes, double seconds);
+    void set_right_ascension(const std::string& string);
+    std::string get_right_ascension() const; 
+
+    void set_declination(int degrees, int minutes, double seconds);
+    void set_declination(const std::string& string);
+    std::string get_declination() const;
+
     virtual std::string type() const=0;
     virtual std::ostream& print_derived(std::ostream& os) const = 0;
     inline astronomical_object(std::string name): name{name}{};
