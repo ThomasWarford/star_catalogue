@@ -22,7 +22,7 @@ class star : public astronomical_object
     inline std::string type() const override {return "star";}
 public:
     // star( std::string name, double mass, char spectral_type, double relative_magnitude, std::vector<std::string> children, std::string parent);
-    star(std::string name);
+    star(std::string name): astronomical_object(name){};
     void set_spectral_type(char new_spectral_type);
     void set_relative_magnitude(double new_relative_magnitude);
     void populate_derived(std::ifstream& file, int& line_counter) override;

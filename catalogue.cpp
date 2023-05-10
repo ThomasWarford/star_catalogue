@@ -2,11 +2,12 @@
 #include<fstream>
 #include<algorithm>
 #include<iterator>
-#include<any>
+#include<set>
 #include"functions.h"
 #include"catalogue.h"
 #include"star.h"
 #include"galaxy.h"
+#include"planet.h"
 
 
 void catalogue::add_object(std::unique_ptr<astronomical_object> object)
@@ -20,18 +21,26 @@ void catalogue::add_object(std::unique_ptr<astronomical_object> object)
 }
 
 void catalogue::add_object()
-{
+{   
     std::string name{ input<std::string>("name: ") };
+
+    if (object_ptrs.find(name) != object_ptrs.end()){
+        std::cout<<"Object with name "<<name<<" already exists. Catalogue has not been modified."<<std::endl;
+
+        return;
+    }
+
     add_object(name);
+
 }
 
+// name must not exist in catalogue, or undefinied behavior will occur.
 void catalogue::add_object(std::string& name, bool second_call)
-{
+{   
+
     std::string type_string;
     type_cases type_enum;
-    // while (type_cases_map.find(type_string) != type_cases_map.end()){
-    //     type_string = input<std::string>("type: ");
-    // }
+
     bool looping{true};
     while (looping) {
         looping = false;
@@ -51,14 +60,17 @@ void catalogue::add_object(std::string& name, bool second_call)
 
     switch(type_enum){
         case is_star:
-            std::cout<<"*star*";
             new_object_ptr = std::unique_ptr<astronomical_object>( new star(name) ); 
             break;
 
         case is_galaxy:
-            std::cout<<"*galaxy*";
             new_object_ptr = std::unique_ptr<astronomical_object>( new galaxy(name) ); 
             break;
+        
+        case is_planet:
+            new_object_ptr = std::unique_ptr<astronomical_object>( new planet(name) ); 
+            break;
+
         default:
             break;
     }
@@ -66,7 +78,7 @@ void catalogue::add_object(std::string& name, bool second_call)
 
     new_object_ptr->populate(second_call); // indent prompting if second call
 
-    if (!second_call){
+    if (!second_call){ // avoid setting children for child objects, to prevent recursion errors
         set_object_children(new_object_ptr);
     }
 
@@ -79,16 +91,15 @@ void catalogue::set_object_children(std::unique_ptr<astronomical_object>& parent
 
     while (true){
         child_name = input<std::string>("Enter the name of a child object of parent "+parent_object->get_name()+ " (or enter nothing to stop): ");
-        
+        if (child_name.empty()){ // Exit when the user presses enter
+            return;
+        }
+
         if (child_name==parent_object->get_name()) {
             std::cout<<"Object cannot be its own child.\n";
             continue;
         }
 
-        if (child_name.empty()){ // Exit when the user presses enter
-            return;
-
-        }
         if (object_ptrs.find(child_name) == object_ptrs.end()){ // if child is not in the catalogue
             std::cout<<child_name<<" is not in the catalogue.\n";
             if (yes_or_no("Create a new child "+child_name+" of parent "+parent_object->get_name()+ "?")){
@@ -109,6 +120,10 @@ void catalogue::remove_object(std::string& name)
 {
     if (!object_ptrs.erase(name)){
         throw std::invalid_argument("Object with name "+name+" does not exist.\n");
+    }
+
+    for (auto& key_value: object_ptrs) {
+        key_value.second->remove_child_if_exists(name);
     }
 }
 
@@ -223,7 +238,6 @@ std::vector<std::string>& catalogue::sort_indices(std::vector<std::string>& indi
         }    
     }
 
-    std::any lambda;
     if (sort_by=="mass"){
         std::sort(indices.begin(), indices.end(), [this](std::string& i, std::string& j){ return (object_ptrs.at(i)->get_mass() > object_ptrs.at(j)->get_mass()); }); 
     }
@@ -372,16 +386,18 @@ void catalogue::load(std::string& file_name)
             
             switch(get_type_enum(type)) {
                 case type_cases::is_star:
-                    std::cerr <<"*star*";
                     new_object_ptr = std::unique_ptr<astronomical_object>( new star(name) ); 
                     break;
                 
                 case type_cases::is_galaxy:
-                    std::cerr <<"*galaxy*";
                     new_object_ptr = std::unique_ptr<astronomical_object>( new galaxy(name) ); 
 
                     break;
                 
+                case type_cases::is_planet:
+                    new_object_ptr = std::unique_ptr<astronomical_object>( new planet(name) ); 
+
+                    break;
 
                 default:
                     throw std::invalid_argument("Invalid astronomical object type.");

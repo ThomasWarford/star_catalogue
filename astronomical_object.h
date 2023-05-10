@@ -26,12 +26,14 @@ private:
     } declination;
 
     const std::string name;
-    double mass;
-    double distance;
+    double mass; // in solar masses
+    double distance; // in parsecs
     std::set<std::string> children;
     std::string parent;
     virtual double mass_bound_lower() {return 0;}
-    virtual double mass_bound_upper() {return 0;}
+    virtual double mass_bound_upper()=0;
+    virtual double distance_bound_lower() {return 0;}
+    virtual double distance_bound_upper() {return 9.8e9;};
 
 
 
@@ -39,8 +41,11 @@ private:
 public: 
     void set_distance(double new_distance);
     void set_right_ascension(int hours, int minutes, double seconds);
+    void set_right_ascension(bool indent);
     void set_right_ascension(const std::string& string);
     std::string get_right_ascension() const; 
+    void set_declination(bool indent);
+
 
     void set_declination(int degrees, int minutes, double seconds);
     void set_declination(const std::string& string);
@@ -53,6 +58,7 @@ public:
     inline double get_mass(){return mass;}
     inline void set_children(std::set<std::string> new_children){children = new_children;}
     inline std::set<std::string> get_children() const {return children;}
+    void remove_child_if_exists(std::string& child_name);
     inline void add_child(std::string new_child){children.insert(new_child);}
     inline void set_parent(std::string new_parent){parent=new_parent;}
     inline std::string get_name() {return name;}

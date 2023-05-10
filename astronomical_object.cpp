@@ -39,7 +39,7 @@ void astronomical_object::set_declination(const std::string& string) {
 
 void astronomical_object::set_distance(double new_distance)
 {
-    check_range_error("Distance", 0, 9.8e9, new_distance);
+    check_range_error("Distance", distance_bound_lower(), distance_bound_upper(), new_distance);
     distance=new_distance;
 }
 
@@ -65,8 +65,8 @@ std::ostream& operator<<(std::ostream& os, const astronomical_object& output_ast
 void astronomical_object::set_right_ascension(int hours, int minutes, double seconds)
 {   
     check_range_error("Seconds", 0, 60, seconds);
-    check_range_error("Minutes", 0, 60, minutes);
-    check_range_error("Hours", 0, 24, hours);
+    check_range_error("Minutes", 0, 59.1, minutes);
+    check_range_error("Hours", 0, 23.1, hours);
     double new_right_ascension{ hours + minutes/60 + seconds/3600 };
     check_range_error("Right ascension", 0, 24, new_right_ascension);
     // right_ascension = new_right_ascension;
@@ -93,8 +93,8 @@ std::string astronomical_object::get_right_ascension() const
 void astronomical_object::set_declination(int degrees, int minutes, double seconds)
 {   
     check_range_error("Seconds", 0, 60, seconds);
-    check_range_error("Minutes", 0, 60, minutes);
-    check_range_error("Degrees", -90, 90, degrees);
+    check_range_error("Minutes", 0, 59.1, minutes);
+    check_range_error("Degrees", -90, 89.1, degrees);
     double new_declination{ degrees + minutes/60 + seconds/3600 };
     check_range_error("Declination", -90, 90, new_declination);
     // right_ascension = new_right_ascension;
@@ -106,13 +106,6 @@ void astronomical_object::set_declination(int degrees, int minutes, double secon
 
 std::string astronomical_object::get_declination() const
 {
-
-    // int hours = static_cast<int>(right_ascension);
-    // double remaining = (right_ascension - hours) * 60.0;
-    // int minutes = static_cast<int>(remaining);
-    // remaining = (remaining * 60.0) - minutes;
-    // double seconds = remaining * 60.0;
-
     std::stringstream out;
     out<<declination.degrees<<"\u00B0"<<declination.minutes<<"\u2032"<<declination.seconds<<"\u2033";
     return out.str();
@@ -163,6 +156,56 @@ void astronomical_object::populate_base(std::ifstream& file, int& line_counter)
 
 }
 
+void astronomical_object::set_right_ascension(bool indent)
+{
+    bool looping{true};
+    int hours;
+    int minutes;
+    double seconds;
+    while (looping) {
+        std::cout<<"right_ascension:\n";
+        hours = input<int>("  hours: ", indent);
+        minutes = input<int>("  minutes: ", indent);
+        seconds = input<double>("  seconds: ", indent);
+        try{
+            set_right_ascension(hours, minutes, seconds);
+            looping=false;
+        }
+        catch(std::range_error error) {
+            std::cout<<error.what()<<std::endl;
+        }
+    }
+}
+
+void astronomical_object::set_declination(bool indent)
+{
+    bool looping{true};
+    int degrees;
+    int minutes;
+    double seconds;
+    while (looping) {
+        std::cout<<"declination:\n";
+        degrees = input<int>("  degrees: ", indent);
+        minutes = input<int>("  minutes: ", indent);
+        seconds = input<double>("  seconds: ", indent);
+        try{
+            set_declination(degrees, minutes, seconds);
+            looping=false;
+        }
+        catch(std::range_error error) {
+            std::cout<<error.what()<<std::endl;
+        }
+    }
+}
+
+void astronomical_object::remove_child_if_exists(std::string& child_name)
+{
+    auto it { children.find(child_name) };
+    if (it != children.end()) {
+        children.erase(it);
+    }
+}
+
 void astronomical_object::populate(bool indent)
 {
     populate_base(indent);
@@ -170,9 +213,16 @@ void astronomical_object::populate(bool indent)
 }
 
 void astronomical_object::populate_base(bool indent)
-{
+{   
+    set_right_ascension(indent);
+    set_declination(indent);
+
+    double new_distance;
+    prompt_and_read_into_var("distance (kpc)", new_distance, distance_bound_lower(), distance_bound_upper(), indent);
+    set_distance(new_distance);
+
     double new_mass;
-    prompt_and_read_into_var("mass", new_mass, mass_bound_lower(), mass_bound_upper(), indent);
+    prompt_and_read_into_var("mass (\u2609)", new_mass, mass_bound_lower(), mass_bound_upper(), indent);
     set_mass(new_mass);
 }
 

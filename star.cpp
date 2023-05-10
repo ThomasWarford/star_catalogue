@@ -11,7 +11,6 @@
 //     } 
 // }
 
-star::star( std::string name): astronomical_object{name} {}
 
 std::ostream& star::print_derived(std::ostream& os) const
 {
