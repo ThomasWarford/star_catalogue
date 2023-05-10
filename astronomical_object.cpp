@@ -218,11 +218,11 @@ void astronomical_object::populate_base(bool indent)
     set_declination(indent);
 
     double new_distance;
-    prompt_and_read_into_var("distance (kpc)", new_distance, distance_bound_lower(), distance_bound_upper(), indent);
+    prompt_and_read_into_var("distance (pc)", new_distance, distance_bound_lower(), distance_bound_upper(), indent);
     set_distance(new_distance);
 
     double new_mass;
-    prompt_and_read_into_var("mass (\u2609)", new_mass, mass_bound_lower(), mass_bound_upper(), indent);
+    prompt_and_read_into_var("mass (L\u2609)", new_mass, mass_bound_lower(), mass_bound_upper(), indent);
     set_mass(new_mass);
 }
 

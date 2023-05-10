@@ -20,6 +20,7 @@ class star : public astronomical_object
     double relative_magnitude{-100};
     std::ostream& print_derived(std::ostream& os) const override;
     inline std::string type() const override {return "star";}
+    inline std::string colour() const override {return "\033[33m";}
 public:
     // star( std::string name, double mass, char spectral_type, double relative_magnitude, std::vector<std::string> children, std::string parent);
     star(std::string name): astronomical_object(name){};

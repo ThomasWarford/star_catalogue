@@ -15,6 +15,7 @@ private:
     double mass_bound_upper() override{return 1e16;}
     std::ostream& print_derived(std::ostream& os) const override;
     std::string type() const override {return "galaxy";}
+    inline std::string colour() const override {return "\033[34m";}
 
 public:
     galaxy(std::string name): astronomical_object{name} {}

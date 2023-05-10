@@ -20,7 +20,7 @@ int main()
             looping = false;
             std::cout<<"Enter a number to select one of the following options to start."<<std::endl;
             std::cout<<"1: Load catalogue from file."<<std::endl;
-            std::cout<<"2: Create new catalogue."<<std::endl;
+            std::cout<<"2: Create new catalogue from scratch."<<std::endl;
             int choice{ input<int>("Please enter an integer. \n") };
             
             switch (choice){
@@ -29,6 +29,7 @@ int main()
                     break;
                 }
                 case 2:{
+                    std::cout<<"Create the first astronomical object."<<std::endl;
                     cat.add_object();
                     break;
                 }
@@ -51,18 +52,19 @@ int main()
             std::cout<<"1: View the catalogue."<<std::endl;
             std::cout<<"2: Save the catalogue."<<std::endl;
             std::cout<<"3: Add additional object."<<std::endl;
-            std::cout<<"4: Merge catalogue with another catalogue file."<<std::endl;
-            std::cout<<"5: Remove an object."<<std::endl;
-            std::cout<<"6: View children of object."<<std::endl;
-            std::cout<<"7: Select and sort objects."<<std::endl;
-            std::cout<<"8: Quit."<<std::endl;
+            std::cout<<"4: Add children to an existing object."<<std::endl;
+            std::cout<<"5: Merge catalogue with another catalogue file."<<std::endl;
+            std::cout<<"6: Remove an object."<<std::endl;
+            std::cout<<"7: View children of object."<<std::endl;
+            std::cout<<"8: Select and sort objects."<<std::endl;
+            std::cout<<"9: Quit."<<std::endl;
 
 
             int choice{ input<int>("Please enter an integer. \n") };
             
             switch (choice){
                 case 1:{
-                    std::cout<<cat;
+                    cat.print();
                     break;
                 }
                 case 2:{
@@ -73,24 +75,28 @@ int main()
                     cat.add_object();
                     break;
                 }
-                case 4:{ // merge with another file
+                case 4:{ // set children of an existing object
+                    cat.set_object_children();
+                    break;
+                }
+                case 5:{ // merge with another file
                     cat.load();
                     break;
                 }
-                case 5:{ // remove an object
+                case 6:{ // remove an object
                     cat.remove_object();
                     break;
                 }
-                case 6:{ // view children subcatalogue
+                case 7:{ // view children subcatalogue
                     cat.print_children();
                     break;
                 }
-                case 7:{ // select and sort
+                case 8:{ // select and sort
                     std::vector<std::string> indices = cat.get_indices();
                     cat.print(indices);
                     break;
                 }
-                case 8:{ // quit
+                case 9:{ // quit
                     looping=false;
                     std::cout<<"Thank you for using the catalogue."<<std::endl;
                     break;

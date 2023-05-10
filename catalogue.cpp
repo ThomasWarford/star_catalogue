@@ -85,12 +85,27 @@ void catalogue::add_object(std::string& name, bool second_call)
     add_object(std::move(new_object_ptr));
 }
 
-void catalogue::set_object_children(std::unique_ptr<astronomical_object>& parent_object)
+void::catalogue::set_object_children()
+{
+    bool looping{true};
+    std::string object_name;
+    while (looping){
+        looping = false;
+        object_name = input<std::string>("Enter the name of an object to set children for: ");
+        if (object_ptrs.find(object_name) == object_ptrs.end()){
+            std::cout<<object_name<<" is not in the catalogue. Try again.\n";
+            looping=true;
+        }
+    }
+    set_object_children(object_ptrs[object_name], false);
+}
+
+void catalogue::set_object_children(std::unique_ptr<astronomical_object>& parent_object, bool recursion_check) // bool to prevent recursion issues
 {
     std::string child_name;
 
     while (true){
-        child_name = input<std::string>("Enter the name of a child object of parent "+parent_object->get_name()+ " (or enter nothing to stop): ");
+        child_name = input<std::string>("Enter the name of a child object of parent "+parent_object->get_name()+ "to add a child (or enter nothing to stop): ");
         if (child_name.empty()){ // Exit when the user presses enter
             return;
         }
@@ -104,7 +119,7 @@ void catalogue::set_object_children(std::unique_ptr<astronomical_object>& parent
             std::cout<<child_name<<" is not in the catalogue.\n";
             if (yes_or_no("Create a new child "+child_name+" of parent "+parent_object->get_name()+ "?")){
                 parent_object->add_child(child_name);
-                add_object(child_name, true); // second_call = true to prevent 'grandparent' being created again as child
+                add_object(child_name, recursion_check); // second_call = true to prevent 'grandparent' being created again as child
             }
             else{
                 std::cout<<"Child "+child_name+" not added to parent "+parent_object->get_name()+".\n";
@@ -145,17 +160,23 @@ std::ostream& operator<<(std::ostream& os, const catalogue& outputted_catalogue)
     return os;
 }
 
+void catalogue::print() const
+{
+    for (auto const& key_value: object_ptrs){
+        std::cout << key_value.second->colour()<<(*key_value.second)<<"\033[0m"<<'\n';
+    }
+}
+
+
 void catalogue::print(std::vector<std::string>& indexes) const
 {   
     if (indexes.empty()){
-        for (auto& key_value: object_ptrs){
-            std::cout << *(key_value.second);
-            std::cout << '\n';
-        }
+        std::cout<<"No objects selected.\n";
     }
     else{
         for (auto& index: indexes) {
-            std::cout << *(object_ptrs.at(index));
+            auto &object = object_ptrs.at(index);
+            std::cout << object->colour()<<*object<<"\033[0m"<<'\n';
             std::cout << '\n';
         }
     }
@@ -222,30 +243,34 @@ std::vector<std::string>& catalogue::sort_indices(std::vector<std::string>& indi
 {
     std::cout<<"How would you like to sort the objects?\n";
 
-    std::set<std::string> sort_by_options{"mass", "type", "string"};
+    std::set<std::string> sort_by_options{"mass", "type", "distance"};
     
     bool looping{true};
     std::string sort_by;
     while (looping){
-        std::cout<<"You can sort by mass, name or type (entering nothing will sort by name.\n";
+        std::cout<<"You can sort by mass, name, distance or type (entering nothing will sort by name.\n";
         sort_by = input<std::string>("Sort by: ");
 
         if (sort_by_options.find(sort_by) != sort_by_options.end()) { // if type is in the map
             looping = false;
         }
         if (sort_by.empty()){ 
-            return indices;
+            sort_by="name";
         }    
     }
 
     if (sort_by=="mass"){
-        std::sort(indices.begin(), indices.end(), [this](std::string& i, std::string& j){ return (object_ptrs.at(i)->get_mass() > object_ptrs.at(j)->get_mass()); }); 
+        std::sort(indices.begin(), indices.end(), [this](std::string& i, std::string& j){ return (object_ptrs.at(i)->get_mass() < object_ptrs.at(j)->get_mass()); }); 
     }
     if (sort_by=="type"){
         std::sort(indices.begin(), indices.end(), [this](std::string& i, std::string& j){ return (object_ptrs.at(i)->type() < object_ptrs.at(j)->type()); }); 
     }
-
-    // map is already sorted by name!
+    if (sort_by=="distance"){
+        std::sort(indices.begin(), indices.end(), [this](std::string& i, std::string& j){ return (object_ptrs.at(i)->get_distance() < object_ptrs.at(j)->get_distance()); });
+    }
+    if (sort_by=="name"){
+        std::sort(indices.begin(), indices.end(), [this](std::string& i, std::string& j){ return (object_ptrs.at(i)->get_name() < object_ptrs.at(j)->get_name()); });
+    }
 
     return indices;
 }
@@ -297,9 +322,10 @@ void catalogue::save(std::string& file_name) const
 {
     std::ofstream file;
     file.open(file_name, std::ios::out);
-    file << (*this);
+    file << *this;
     file.close();
 }
+
 
 void catalogue::save() const
 {
@@ -500,8 +526,4 @@ std::pair<int, std::set<std::string>> catalogue::get_number_of_objects_and_names
     file.close();
     return std::pair<int, std::set<std::string>>{object_counter, object_names};
 }
-
-
-// template function taking line and checking it follows "name: type" format, returning value of type
-
 

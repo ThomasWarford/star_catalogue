@@ -37,20 +37,19 @@ private:
 
 
 
-
 public: 
+    virtual std::string colour() const=0;
     void set_distance(double new_distance);
     void set_right_ascension(int hours, int minutes, double seconds);
     void set_right_ascension(bool indent);
     void set_right_ascension(const std::string& string);
     std::string get_right_ascension() const; 
     void set_declination(bool indent);
-
+    inline double get_distance(){return distance;}
 
     void set_declination(int degrees, int minutes, double seconds);
     void set_declination(const std::string& string);
     std::string get_declination() const;
-
     virtual std::string type() const=0;
     virtual std::ostream& print_derived(std::ostream& os) const = 0;
     inline astronomical_object(std::string name): name{name}{};

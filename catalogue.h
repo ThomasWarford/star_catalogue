@@ -17,12 +17,14 @@ private:
     std::map<std::string, type_cases> type_cases_map{{"star", type_cases::is_star}, {"galaxy", type_cases::is_galaxy}, {"planet", type_cases::is_planet}};
     type_cases get_type_enum(std::string type_string) const;
     std::set<std::string> read_children(std::ifstream& file, int& line_counter) const;
-    void set_object_children(std::unique_ptr<astronomical_object>& parent_object);
+    void set_object_children(std::unique_ptr<astronomical_object>& parent_object, bool recursion_check=true);
 
 
 
 public:
     ~catalogue(){};
+    void set_object_children();
+    void print() const;
     // std::pair<std::map<std::string, astronomical_object*>::iterator, bool> add_object(astronomical_object* object_ptr)
     void add_object(std::unique_ptr<astronomical_object> object);
     void add_object(std::string& name, bool second_call=false);
