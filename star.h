@@ -1,7 +1,6 @@
 #ifndef STAR
 #define STAR
 
-#include<iostream>
 #include"astronomical_object.h"
 
 

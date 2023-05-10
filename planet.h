@@ -1,7 +1,6 @@
 #ifndef PLANET
 #define PLANET
 
-#include<iostream>
 #include"astronomical_object.h"
 
 

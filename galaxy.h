@@ -2,7 +2,6 @@
 #define GALAXY
 
 #include"astronomical_object.h"
-#include<iostream>
 
 
 class galaxy : public astronomical_object 

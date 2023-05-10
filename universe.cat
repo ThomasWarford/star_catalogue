@@ -1,11 +1,9 @@
 name                    alpha_centauri          
-type                    star                    
+type                    misc                    
 right_ascension         14h29m36.494s           
 declination             -60°50′15.0992″    
 distance                4.344                   
-mass                    2                       
-relative_magnitude      -0.27                   
-spectral_type           G                       
+mass                    2                                         
 children                
 
 name                    earth                   

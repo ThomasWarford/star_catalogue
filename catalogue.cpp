@@ -8,7 +8,7 @@
 #include"star.h"
 #include"galaxy.h"
 #include"planet.h"
-
+#include"misc_object.h"
 
 void catalogue::add_object(std::unique_ptr<astronomical_object> object)
 {   
@@ -71,6 +71,10 @@ void catalogue::add_object(std::string& name, bool second_call)
             new_object_ptr = std::unique_ptr<astronomical_object>( new planet(name) ); 
             break;
 
+        case is_misc:
+            new_object_ptr = std::unique_ptr<astronomical_object>( new misc_object(name) ); 
+            break;
+
         default:
             break;
     }
@@ -105,7 +109,7 @@ void catalogue::set_object_children(std::unique_ptr<astronomical_object>& parent
     std::string child_name;
 
     while (true){
-        child_name = input<std::string>("Enter the name of a child object of parent "+parent_object->get_name()+ "to add a child (or enter nothing to stop): ");
+        child_name = input<std::string>("Enter the name of a child object of parent "+parent_object->get_name()+ " to add a child (or enter nothing to stop): ");
         if (child_name.empty()){ // Exit when the user presses enter
             return;
         }
@@ -337,7 +341,14 @@ catalogue::type_cases catalogue::get_type_enum(std::string type_string) const
 {   
     auto iterator{type_cases_map.find(type_string)};
     if (iterator == type_cases_map.end()) {
-        throw std::invalid_argument("Invalid astronomical object type: " + type_string + "\n");
+        std::stringstream error_message;
+        error_message<<"Invalid astronomical object type: " + type_string + "\n";
+        error_message<<"Allowed types are: ";
+        for (auto const& key_value: type_cases_map) {
+            error_message<<key_value.first<<",";
+        }
+        error_message<<"\n";
+        throw std::invalid_argument(error_message.str());
     }
 
     return iterator->second;
@@ -406,6 +417,7 @@ void catalogue::load(std::string& file_name)
             if (object_ptrs.count(name)){
                 throw std::invalid_argument("Object with name "+name+" already exists.\n");
             }
+            std::cout<<"Loading object "<<name<<".\n";
             read_line_into_var(file, GET_VARIABLE_NAME(type), type, line_counter);
 
             std::unique_ptr<astronomical_object> new_object_ptr;
@@ -422,6 +434,11 @@ void catalogue::load(std::string& file_name)
                 
                 case type_cases::is_planet:
                     new_object_ptr = std::unique_ptr<astronomical_object>( new planet(name) ); 
+
+                    break;
+
+                    case type_cases::is_misc:
+                    new_object_ptr = std::unique_ptr<astronomical_object>( new misc_object(name) ); 
 
                     break;
 

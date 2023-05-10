@@ -13,8 +13,10 @@ class catalogue
 private:
     std::map<std::string, std::unique_ptr<astronomical_object>> object_ptrs;
     std::pair<int, std::set<std::string>> get_number_of_objects_and_names(std::string file_name) const;
-    enum type_cases { is_star, is_galaxy, is_planet }; // defined here so it's only defined once // would be good to put const!
-    std::map<std::string, type_cases> type_cases_map{{"star", type_cases::is_star}, {"galaxy", type_cases::is_galaxy}, {"planet", type_cases::is_planet}};
+    enum type_cases { is_star, is_galaxy, is_planet, is_misc }; // defined here so it's only defined once // would be good to put const!
+    std::map<std::string, type_cases> type_cases_map{
+        {"star", type_cases::is_star}, {"galaxy", type_cases::is_galaxy}, {"planet", type_cases::is_planet}, { "misc", type_cases::is_misc} 
+        };
     type_cases get_type_enum(std::string type_string) const;
     std::set<std::string> read_children(std::ifstream& file, int& line_counter) const;
     void set_object_children(std::unique_ptr<astronomical_object>& parent_object, bool recursion_check=true);

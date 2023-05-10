@@ -2,9 +2,6 @@
 #include<vector>
 #include<map>
 #include<string>
-#include"astronomical_object.h"
-#include"galaxy.h"
-#include"star.h"
 #include"catalogue.h"
 #include"functions.h"
 

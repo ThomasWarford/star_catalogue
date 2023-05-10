@@ -44,7 +44,6 @@ template<typename T>
 void read_line_into_var(std::ifstream& file, const std::string& variable_name, T& variable, int& line_number)
 {   
     line_number++;
-    std::cerr<<"reading "<<variable_name<<line_number<<std::endl;
     std::string line_string;
     std::getline(file, line_string);
     std::stringstream ss{line_string};
