@@ -15,9 +15,9 @@ public:
     inline std::string type() const override {return "misc";}
     inline std::string colour() const override {return "\033[35m";}
 
-    
-    void populate_derived(std::ifstream& file, int& line_counter) override {};
-    void populate_derived(bool indent) override {};
+    // variable names removed to prevent unused variable warning
+    void populate_derived(std::ifstream&, int&) override {};
+    void populate_derived(bool) override {};
 
 };
 
