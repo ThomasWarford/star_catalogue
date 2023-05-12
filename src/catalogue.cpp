@@ -50,7 +50,7 @@ void catalogue::add_object(std::string& name, bool second_call)
         try {
             type_enum = get_type_enum(type_string);
         }
-        catch (std::invalid_argument error) {  
+        catch (std::invalid_argument const& error) {  
             std::cout<<error.what();
             looping=true;
         }
@@ -493,7 +493,7 @@ void catalogue::load(std::string& file_name)
             );
 
     }
-    catch(std::exception& error){
+    catch(std::exception const& error){
         std::stringstream error_message;
         error_message<<"Error on line "<<line_counter<<" of file \""<<file_name<<"\".\n"<<error.what();
         throw std::invalid_argument(error_message.str());

@@ -121,7 +121,7 @@ void astronomical_object::set_mass(double new_mass)
 
 void astronomical_object::check_range_error(std::string quantity_name, double lower, double upper, double entered_value) const
 {
-    if ((entered_value >= upper) | entered_value < lower){
+    if ((entered_value >= upper) | (entered_value < lower)){
         std::stringstream error_message;
         error_message<<quantity_name<<" should be between "<<lower<<" and "<<upper<<". Value entered: " << entered_value;
         throw std::range_error(error_message.str());
@@ -171,7 +171,7 @@ void astronomical_object::set_right_ascension(bool indent)
             set_right_ascension(hours, minutes, seconds);
             looping=false;
         }
-        catch(std::range_error error) {
+        catch(std::range_error const& error) {
             std::cout<<error.what()<<std::endl;
         }
     }
@@ -192,7 +192,7 @@ void astronomical_object::set_declination(bool indent)
             set_declination(degrees, minutes, seconds);
             looping=false;
         }
-        catch(std::range_error error) {
+        catch(std::range_error const& error) {
             std::cout<<error.what()<<std::endl;
         }
     }
@@ -238,7 +238,7 @@ void astronomical_object::prompt_and_read_into_var(const std::string &quantity_n
             check_range_error(quantity_name, lower_bound, upper_bound, output);
             variable=output;
         }
-        catch(std::range_error error) {
+        catch(std::range_error const& error) {
             std::cout<<error.what()<<std::endl;
             looping=true;
         }
