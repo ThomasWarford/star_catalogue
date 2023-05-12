@@ -13,21 +13,7 @@
 
 const int WIDTH{24};
 
-
 void wait_for_enter();
-bool common_element(const std::set<std::string>& set1, const std::set<std::string>& set2);
-
-// Checks that a key in map exists in set
-// template<typename T>
-// bool common_element(const std::set<std::string>& set, const std::map<std::string, T>& map)  
-// {
-//     auto it = std::find_first_of(map.begin(), map.end(), set.begin(), set.end(),
-//                                 [](const std::pair<int, std::string>& map_pair, const int& set_value) {
-//                                     return map_pair.first == set_value;
-//                                 });
-//     return it != map.end();
-// }
-
 bool yes_or_no(const std::string& prompt);
 
 
@@ -67,6 +53,7 @@ T input(std::string prompt, bool indent=false)
     std::string line_string;
     T output;
     std::cout<<prompt;
+    
     while (std::getline(std::cin, line_string)) {
         if (line_string.empty()) { // if the user inputs nothing
             return T{}; // return an empty T object
@@ -79,20 +66,6 @@ T input(std::string prompt, bool indent=false)
     }
     return output; // to avoid compiler warning, shouldn't be called.
 }
-
-// template<typename T>
-// T prompt_variable_input(std::string variable_name, T variable)
-// {   
-//     error_message
-//     while (std::getline(std::cin, line_string)) {
-//         std::stringstream ss{line_string};
-//         if ((ss>>output) && !(ss>>line_string)){
-//             return output;
-//         }
-//         std::cout<<prompt<<std::endl;
-//     }
-//     return 0; // to avoid compiler warning, shouldn't be read.
-// }
 
 
 #endif

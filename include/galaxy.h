@@ -12,13 +12,17 @@ private:
 
     double mass_bound_lower() override {return 1e5;}
     double mass_bound_upper() override{return 1e16;}
+    
     std::ostream& print_derived(std::ostream& os) const override;
-    std::string type() const override {return "galaxy";}
-    inline std::string colour() const override {return "\033[34m";}
 
 public:
     galaxy(std::string name): astronomical_object{name} {}
+    std::string type() const override {return "galaxy";}
+    inline std::string colour() const override {return "\033[34m";} // blue
+
+
     void set_hubble_type(std::string new_hubble_type);
+
     void populate_derived(std::ifstream& file, int& line_counter) override;
     void populate_derived(bool indent) override;
 

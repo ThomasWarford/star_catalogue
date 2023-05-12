@@ -7,7 +7,6 @@ void planet::set_period(double new_period)
     period = new_period;
 }
 
-
 std::ostream& planet::print_derived(std::ostream& os) const
 {
     print_table_row(os, GET_VARIABLE_NAME(period), period); 

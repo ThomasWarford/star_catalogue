@@ -1,9 +1,14 @@
 #include<iostream>
 #include<sstream>
-#include"astronomical_object.h"
-#include"functions.h"
+#include<astronomical_object.h>
+#include<functions.h>
 #include <regex>
 
+void astronomical_object::set_distance(double new_distance)
+{
+    check_range_error("Distance", distance_bound_lower(), distance_bound_upper(), new_distance);
+    distance=new_distance;
+}
 
 void astronomical_object::set_right_ascension(const std::string& string) {
     std::regex right_ascension_regex("^([-+]?\\d+)h(\\d+)m([\\d.]+)s$");
@@ -35,31 +40,6 @@ void astronomical_object::set_declination(const std::string& string) {
     throw std::invalid_argument("Declination value not formatted correctly.");
     return;
 
-}
-
-void astronomical_object::set_distance(double new_distance)
-{
-    check_range_error("Distance", distance_bound_lower(), distance_bound_upper(), new_distance);
-    distance=new_distance;
-}
-
-std::ostream& operator<<(std::ostream& os, const astronomical_object& output_astronomical_object)
-{
-    print_table_row(os, "name", output_astronomical_object.name);
-    print_table_row(os, "type", output_astronomical_object.type());
-    print_table_row(os, "right_ascension", output_astronomical_object.get_right_ascension());
-    print_table_row(os, "declination", output_astronomical_object.get_declination());
-    print_table_row(os, "distance", output_astronomical_object.distance);
-    print_table_row(os, "mass", output_astronomical_object.mass);
-    
-    output_astronomical_object.print_derived(os);
-
-    os << std::left << std::setw(WIDTH) << std::setfill(' ') << "children";
-    for (auto child : output_astronomical_object.children) {
-        os << child << "  ";
-    }
-    os<<'\n';
-    return os;
 }
 
 void astronomical_object::set_right_ascension(int hours, int minutes, double seconds)
@@ -111,51 +91,6 @@ std::string astronomical_object::get_declination() const
     return out.str();
 }
 
-
-void astronomical_object::set_mass(double new_mass)
-{   
-    check_range_error("Mass", mass_bound_lower(), mass_bound_upper(), new_mass);
-
-    mass = new_mass;
-}
-
-void astronomical_object::check_range_error(std::string quantity_name, double lower, double upper, double entered_value) const
-{
-    if ((entered_value >= upper) | entered_value < lower){
-        std::stringstream error_message;
-        error_message<<quantity_name<<" should be between "<<lower<<" and "<<upper<<". Value entered: " << entered_value;
-        throw std::range_error(error_message.str());
-    }
-}
-
-
-
-
-void astronomical_object::populate(std::ifstream& file, int& line_counter)
-{   
-    populate_base(file, line_counter);
-    populate_derived(file, line_counter);
-}
-void astronomical_object::populate_base(std::ifstream& file, int& line_counter)
-{   
-    std::string new_right_ascension;
-    read_line_into_var(file, GET_VARIABLE_NAME(right_ascension), new_right_ascension, line_counter);
-    set_right_ascension(new_right_ascension);
-
-    std::string new_declination;
-    read_line_into_var(file, GET_VARIABLE_NAME(declination), new_declination, line_counter);
-    set_declination(new_declination);
-
-    double new_distance;
-    read_line_into_var(file, GET_VARIABLE_NAME(distance), new_distance, line_counter);
-    set_distance(new_distance);
-
-    double new_mass;
-    read_line_into_var(file, GET_VARIABLE_NAME(mass), new_mass, line_counter);
-    set_mass(new_mass);
-
-}
-
 void astronomical_object::set_right_ascension(bool indent)
 {
     bool looping{true};
@@ -171,7 +106,7 @@ void astronomical_object::set_right_ascension(bool indent)
             set_right_ascension(hours, minutes, seconds);
             looping=false;
         }
-        catch(std::range_error error) {
+        catch(std::range_error const& error) {
             std::cout<<error.what()<<std::endl;
         }
     }
@@ -192,10 +127,17 @@ void astronomical_object::set_declination(bool indent)
             set_declination(degrees, minutes, seconds);
             looping=false;
         }
-        catch(std::range_error error) {
+        catch(std::range_error const& error) {
             std::cout<<error.what()<<std::endl;
         }
     }
+}
+
+void astronomical_object::set_mass(double new_mass)
+{   
+    check_range_error("Mass", mass_bound_lower(), mass_bound_upper(), new_mass);
+
+    mass = new_mass;
 }
 
 void astronomical_object::remove_child_if_exists(std::string& child_name)
@@ -204,6 +146,60 @@ void astronomical_object::remove_child_if_exists(std::string& child_name)
     if (it != children.end()) {
         children.erase(it);
     }
+}
+
+void astronomical_object::check_range_error(std::string quantity_name, double lower, double upper, double entered_value) const
+{
+    if ((entered_value >= upper) | (entered_value < lower)){
+        std::stringstream error_message;
+        error_message<<quantity_name<<" should be between "<<lower<<" and "<<upper<<". Value entered: " << entered_value;
+        throw std::range_error(error_message.str());
+    }
+}
+
+std::ostream& operator<<(std::ostream& os, const astronomical_object& output_astronomical_object)
+{
+    print_table_row(os, "name", output_astronomical_object.name);
+    print_table_row(os, "type", output_astronomical_object.type());
+    print_table_row(os, "right_ascension", output_astronomical_object.get_right_ascension());
+    print_table_row(os, "declination", output_astronomical_object.get_declination());
+    print_table_row(os, "distance", output_astronomical_object.distance);
+    print_table_row(os, "mass", output_astronomical_object.mass);
+    
+    output_astronomical_object.print_derived(os);
+
+    os << std::left << std::setw(WIDTH) << std::setfill(' ') << "children";
+    for (auto child : output_astronomical_object.children) {
+        os << child << "  ";
+    }
+    os<<'\n';
+    return os;
+}
+
+void astronomical_object::populate(std::ifstream& file, int& line_counter)
+{   
+    populate_base(file, line_counter);
+    populate_derived(file, line_counter);
+}
+
+void astronomical_object::populate_base(std::ifstream& file, int& line_counter)
+{   
+    std::string new_right_ascension;
+    read_line_into_var(file, GET_VARIABLE_NAME(right_ascension), new_right_ascension, line_counter);
+    set_right_ascension(new_right_ascension);
+
+    std::string new_declination;
+    read_line_into_var(file, GET_VARIABLE_NAME(declination), new_declination, line_counter);
+    set_declination(new_declination);
+
+    double new_distance;
+    read_line_into_var(file, GET_VARIABLE_NAME(distance), new_distance, line_counter);
+    set_distance(new_distance);
+
+    double new_mass;
+    read_line_into_var(file, GET_VARIABLE_NAME(mass), new_mass, line_counter);
+    set_mass(new_mass);
+
 }
 
 void astronomical_object::populate(bool indent)
@@ -238,15 +234,12 @@ void astronomical_object::prompt_and_read_into_var(const std::string &quantity_n
             check_range_error(quantity_name, lower_bound, upper_bound, output);
             variable=output;
         }
-        catch(std::range_error error) {
+        catch(std::range_error const& error) {
             std::cout<<error.what()<<std::endl;
             looping=true;
         }
     }
 }
-
-
-
 
 void astronomical_object::prompt_and_read_into_var(const std::string &quantity_name, std::string& variable, const std::set<std::string>& allowed_values, bool indent)
 {

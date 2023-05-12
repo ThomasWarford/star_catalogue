@@ -50,7 +50,7 @@ void catalogue::add_object(std::string& name, bool second_call)
         try {
             type_enum = get_type_enum(type_string);
         }
-        catch (std::invalid_argument error) {  
+        catch (std::invalid_argument const& error) {  
             std::cout<<error.what();
             looping=true;
         }
@@ -80,7 +80,7 @@ void catalogue::add_object(std::string& name, bool second_call)
     }
 
 
-    new_object_ptr->populate(second_call); // indent prompting if second call
+    new_object_ptr->populate(second_call); // indent prompting if second call for readability
 
     if (!second_call){ // avoid setting children for child objects, to prevent recursion errors
         set_object_children(new_object_ptr);
@@ -170,7 +170,6 @@ void catalogue::print() const
         std::cout << key_value.second->colour()<<(*key_value.second)<<"\033[0m"<<'\n';
     }
 }
-
 
 void catalogue::print(std::vector<std::string>& indexes) const
 {   
@@ -330,7 +329,6 @@ void catalogue::save(std::string& file_name) const
     file.close();
 }
 
-
 void catalogue::save() const
 {
     std::string file_name{ input<std::string>("Enter a file name without spaces (the file will be overwritten.)\n") };
@@ -378,18 +376,6 @@ std::set<std::string> catalogue::read_children(std::ifstream& file, int& line_nu
 
     return children;
 }
-
-// bool catalogue::any_names_in_catalogue(const std::set<std::string>& names)
-// {
-//     auto it = std::find_first_of(object_ptrs.begin(), object_ptrs.end(), names.begin(), names.end(),
-//                                 [](const std::pair<const std::string, std::unique_ptr<astronomical_object>>& map_pair, const std::string& set_value) {
-//                                     return map_pair.first == set_value;
-//                                 });
-
-//     return it != object_ptrs.end();
-// }
-
-
 
 void catalogue::load(std::string& file_name)
 {   
@@ -483,17 +469,13 @@ void catalogue::load(std::string& file_name)
             }
         }
 
-        // for (auto ptr : object_ptrs){delete ptr.second;} 
-        // object_ptrs.clear();
-        
-        // object_ptrs = std::move(new_catalogue.object_ptrs);
         object_ptrs.insert(
             std::make_move_iterator(new_catalogue.object_ptrs.begin()),
             std::make_move_iterator(new_catalogue.object_ptrs.end())
             );
 
     }
-    catch(std::exception& error){
+    catch(std::exception const& error){
         std::stringstream error_message;
         error_message<<"Error on line "<<line_counter<<" of file \""<<file_name<<"\".\n"<<error.what();
         throw std::invalid_argument(error_message.str());
