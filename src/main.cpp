@@ -109,15 +109,6 @@ int main()
         }
         wait_for_enter();
     }
-
- //#################################################
-
-    // star* star_ptr = new star("star_1");
-    // galaxy* galaxy_ptr = new galaxy("galaxy_1");
-    // catalogue cat;
-    // cat.add_object(star_ptr);
-    // cat.add_object(galaxy_ptr);
-    // std::cout<<cat;
-    
+ 
     return 0;
 }

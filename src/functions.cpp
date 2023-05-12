@@ -22,9 +22,3 @@ bool yes_or_no(const std::string& prompt)
     
     }
 }
-
-bool common_element(const std::set<std::string>& set1, const std::set<std::string>& set2)
-{
-    return std::find_first_of(set1.begin(), set1.end(),
-                            set2.begin(), set2.end()) != set1.end();
-}
