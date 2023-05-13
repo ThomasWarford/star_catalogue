@@ -11,8 +11,6 @@ class catalogue
 {
 private:
     std::map<std::string, std::unique_ptr<astronomical_object>> object_ptrs;
-    std::pair<int, std::set<std::string>> get_number_of_objects_and_names(std::string file_name) const;
-
     // Associate type strings with cases
     enum type_cases{is_star, is_galaxy ,is_planet ,is_misc};
     const std::map<std::string, type_cases> type_cases_map{
@@ -33,6 +31,7 @@ private:
     std::vector<std::string>& sort_indices(std::vector<std::string> &indices) const;
     std::vector<std::string> get_parent_indices() const;
 
+    std::pair<int, std::set<std::string>> get_number_of_objects_and_names(std::string file_name) const;
     void save(std::string &file_name) const;
     void load(std::string &file_name);
 
@@ -47,7 +46,6 @@ public:
     void print(std::vector<std::string> &indexes) const;
     void print() const;
     void save() const;
-    
     void load();
 };
 

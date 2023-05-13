@@ -11,7 +11,7 @@ private:
     const std::set<std::string> allowed_hubble_galaxy_types{"E0", "E1", "E2", "E3", "E4", "E5", "E6", "E7", "S0", "Sa", "Sb", "Sc", "SBa", "SBb", "SBc", "Irr"};
 
     double mass_bound_lower() override {return 1e5;}
-    double mass_bound_upper() override{return 1e16;}
+    double mass_bound_upper() override {return 1e16;}
     
     std::ostream& print_derived(std::ostream& os) const override;
 

@@ -14,9 +14,9 @@ class star : public astronomical_object
     double mass_bound_upper() override {return 250;}
 
     // from https://en.wikipedia.org/wiki/Apparent_magnitude
-    const double relative_magnitude_lower{-28};
-    const double relative_magnitude_upper{33};
-    double relative_magnitude{-100};
+    const double relative_magnitude_bound_lower{-28};
+    const double relative_magnitude_bound_upper{33};
+    double relative_magnitude{0};
 
     std::ostream& print_derived(std::ostream& os) const override;
 public:

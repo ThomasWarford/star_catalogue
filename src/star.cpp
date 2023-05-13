@@ -15,7 +15,7 @@ void star::set_spectral_type(char new_spectral_type)
 
 void star::set_relative_magnitude(double new_relative_magnitude)
 {
-    check_range_error("Relative magnitude", relative_magnitude_lower, relative_magnitude_upper, new_relative_magnitude);
+    check_range_error("Relative magnitude", relative_magnitude_bound_lower, relative_magnitude_bound_upper, new_relative_magnitude);
 
     relative_magnitude = new_relative_magnitude;
 }
@@ -44,7 +44,7 @@ void star::populate_derived(std::ifstream& file, int& line_counter)
 void star::populate_derived(bool indent)
 {
     double new_relative_magnitude;
-    prompt_and_read_into_var("relative_magnitude", new_relative_magnitude, relative_magnitude_lower, relative_magnitude_upper, indent);
+    prompt_and_read_into_var("relative_magnitude", new_relative_magnitude, relative_magnitude_bound_lower, relative_magnitude_bound_upper, indent);
     set_relative_magnitude(new_relative_magnitude);
 
     char new_spectral_type;

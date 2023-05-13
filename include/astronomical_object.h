@@ -33,11 +33,19 @@ private:
     virtual double distance_bound_lower() { return 0; }
     virtual double distance_bound_upper() { return 9.8e9; };
 
+    void populate_base(std::ifstream &file, int &line_counter);
+    virtual void populate_derived(std::ifstream &file, int &line_counter) = 0;
+    void populate_base(bool indent);
+    virtual void populate_derived(bool indent) = 0;
+
+    std::ostream &print_base(std::ostream &os) const;
+    virtual std::ostream &print_derived(std::ostream &os) const = 0;
+
 protected:
     void prompt_and_read_into_var(const std::string &quantity_name, double &variable, const double lower_bound, const double upper_bound, bool indent); // for numerical values
     void prompt_and_read_into_var(const std::string &quantity_name, std::string &variable, const std::set<std::string> &allowed_values, bool indent);   // for strings
     void prompt_and_read_into_var(const std::string &quantity_name, char &variable, const std::set<char> &allowed_values, bool indent);                 // for characters
-    
+
 public:
     inline astronomical_object(std::string name) : name{name} {};
     virtual std::string type() const = 0;
@@ -68,18 +76,10 @@ public:
     inline void add_child(std::string new_child) { children.insert(new_child); }
 
     friend std::ostream &operator<<(std::ostream &os, const astronomical_object &output_astronomical_object);
-    std::ostream &print_base(std::ostream &os) const;
-    virtual std::ostream &print_derived(std::ostream &os) const = 0;
 
     void check_range_error(std::string quantity_name, double lower, double upper, double entered_value) const;
     void populate(std::ifstream &file, int &line_counter);
-    void populate_base(std::ifstream &file, int &line_counter);
-    virtual void populate_derived(std::ifstream &file, int &line_counter) = 0;
-
     void populate(bool indent);
-    void populate_base(bool indent);
-    virtual void populate_derived(bool indent) = 0;
-
 };
 
 #endif

@@ -34,7 +34,7 @@ void catalogue::add_object()
 
 }
 
-// name must not exist in catalogue, or undefinied behavior will occur.
+// name must not exist in catalogue, or add_object(astronomical_object*) will throw an error
 void catalogue::add_object(std::string& name, bool second_call)
 {   
 
@@ -66,7 +66,7 @@ void catalogue::add_object(std::string& name, bool second_call)
         case is_galaxy:
             new_object_ptr = std::unique_ptr<astronomical_object>( new galaxy(name) ); 
             break;
-        
+
         case is_planet:
             new_object_ptr = std::unique_ptr<astronomical_object>( new planet(name) ); 
             break;
@@ -89,7 +89,7 @@ void catalogue::add_object(std::string& name, bool second_call)
     add_object(std::move(new_object_ptr));
 }
 
-void::catalogue::set_object_children()
+void::catalogue::set_object_children() 
 {
     bool looping{true};
     std::string object_name;
@@ -339,7 +339,7 @@ catalogue::type_cases catalogue::get_type_enum(std::string type_string) const
 {   
     auto iterator{type_cases_map.find(type_string)};
     if (iterator == type_cases_map.end()) {
-        std::stringstream error_message;
+        std::stringstream error_message; 
         error_message<<"Invalid astronomical object type: " + type_string + "\n";
         error_message<<"Allowed types are: ";
         for (auto const& key_value: type_cases_map) {
