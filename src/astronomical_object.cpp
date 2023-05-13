@@ -39,7 +39,6 @@ void astronomical_object::set_declination(const std::string& string) {
     }
     throw std::invalid_argument("Declination value not formatted correctly.");
     return;
-
 }
 
 void astronomical_object::set_right_ascension(int hours, int minutes, double seconds)

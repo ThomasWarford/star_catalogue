@@ -23,7 +23,6 @@ void print_table_row(std::ostream& os, const std::string& variable_name, const T
     os << std::left << std::setw(WIDTH) << std::setfill(' ') << variable_name;
     os << std::left << std::setw(WIDTH) << std::setfill(' ') << variable;
     os<<'\n';
-
 }
 
 template<typename T>

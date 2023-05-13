@@ -403,8 +403,8 @@ void catalogue::load(std::string& file_name)
             if (object_ptrs.count(name)){
                 throw std::invalid_argument("Object with name "+name+" already exists.\n");
             }
-            std::cout<<"Loading object "<<name<<".\n";
             read_line_into_var(file, GET_VARIABLE_NAME(type), type, line_counter);
+            std::cout<<"Loading "<<type<<" "<<name<<".\n";
 
             std::unique_ptr<astronomical_object> new_object_ptr;
             
