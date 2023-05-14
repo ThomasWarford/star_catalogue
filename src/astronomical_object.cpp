@@ -178,7 +178,7 @@ std::ostream& operator<<(std::ostream& os, const astronomical_object& output_ast
 void astronomical_object::populate(std::ifstream& file, int& line_counter)
 {   
     populate_base(file, line_counter);
-    populate_derived(file, line_counter);
+    populate_derived(file, line_counter); 
 }
 
 void astronomical_object::populate_base(std::ifstream& file, int& line_counter)

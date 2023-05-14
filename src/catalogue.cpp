@@ -176,11 +176,10 @@ void catalogue::print(std::vector<std::string>& indexes) const
     if (indexes.empty()){
         std::cout<<"No objects selected.\n";
     }
-    else{
-        for (auto& index: indexes) {
+    else{ 
+        for (const auto& index: indexes) {
             auto &object = object_ptrs.at(index);
-            std::cout << object->colour()<<*object<<"\033[0m"<<'\n';
-            std::cout << '\n';
+            std::cout << object->colour()<<*object<<"\033[0m"<<'\n'<< '\n';
         }
     }
 }

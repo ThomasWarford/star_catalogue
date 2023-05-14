@@ -36,12 +36,13 @@ private:
     void populate_base(std::ifstream &file, int &line_counter);
     virtual void populate_derived(std::ifstream &file, int &line_counter) = 0;
     void populate_base(bool indent);
-    virtual void populate_derived(bool indent) = 0;
+    virtual void populate_derived(bool indent) = 0; 
 
     std::ostream &print_base(std::ostream &os) const;
     virtual std::ostream &print_derived(std::ostream &os) const = 0;
 
 protected:
+
     void prompt_and_read_into_var(const std::string &quantity_name, double &variable, const double lower_bound, const double upper_bound, bool indent); // for numerical values
     void prompt_and_read_into_var(const std::string &quantity_name, std::string &variable, const std::set<std::string> &allowed_values, bool indent);   // for strings
     void prompt_and_read_into_var(const std::string &quantity_name, char &variable, const std::set<char> &allowed_values, bool indent);                 // for characters
