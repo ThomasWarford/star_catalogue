@@ -1,3 +1,12 @@
+name                    jupiter                 
+type                    planet                  
+right_ascension         3h2m42.2s               
+declination             -2°34′34.43″       
+distance                2.52268e-05             
+mass                    0.000949                
+period                  11.8593                 
+children    
+
 name                    alpha_centauri          
 type                    misc                    
 right_ascension         14h29m36.494s           
@@ -13,16 +22,7 @@ declination             0°0′0″
 distance                0.000004847699287                       
 mass                    2.985e-06               
 period                  1                       
-children                
-
-name                    jupiter                 
-type                    planet                  
-right_ascension         3h2m42.2s               
-declination             -2°34′34.43″       
-distance                2.52268e-05             
-mass                    0.000949                
-period                  11.8593                 
-children                
+children                            
 
 name                    mars                    
 type                    planet                  
