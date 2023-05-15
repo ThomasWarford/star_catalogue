@@ -1,3 +1,5 @@
-.vscode/*
+/.vscode/*
 build/*
 bin/main
+README.txt
+/without_make/
