@@ -13,7 +13,7 @@ class star : public astronomical_object
     double mass_bound_lower() override {return 0.05;}
     double mass_bound_upper() override {return 250;}
 
-    // from https://en.wikipedia.org/wiki/Apparent_magnitude
+    // from https://en.wikipedia.org/wiki/apparent_magnitude
     const double apparent_magnitude_bound_lower{-28};
     const double apparent_magnitude_bound_upper{33};
     double apparent_magnitude{0};
