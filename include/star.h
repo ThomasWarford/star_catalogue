@@ -14,9 +14,9 @@ class star : public astronomical_object
     double mass_bound_upper() override {return 250;}
 
     // from https://en.wikipedia.org/wiki/Apparent_magnitude
-    const double relative_magnitude_bound_lower{-28};
-    const double relative_magnitude_bound_upper{33};
-    double relative_magnitude{0};
+    const double apparent_magnitude_bound_lower{-28};
+    const double apparent_magnitude_bound_upper{33};
+    double apparent_magnitude{0};
 
     std::ostream& print_derived(std::ostream& os) const override;
 public:
@@ -25,7 +25,7 @@ public:
     inline std::string colour() const override {return "\033[33m";}
 
     void set_spectral_type(char new_spectral_type);
-    void set_relative_magnitude(double new_relative_magnitude);
+    void set_apparent_magnitude(double new_apparent_magnitude);
 
     void populate_derived(std::ifstream& file, int& line_counter) override;
     void populate_derived(bool indent) override;

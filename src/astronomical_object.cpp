@@ -48,7 +48,7 @@ void astronomical_object::set_right_ascension(int hours, int minutes, double sec
     check_range_error("Hours", 0, 23.1, hours);
     double new_right_ascension{ hours + minutes/60 + seconds/3600 };
     check_range_error("Right ascension", 0, 24, new_right_ascension);
-    // right_ascension = new_right_ascension;
+
     right_ascension.hours = hours;
     right_ascension.minutes = minutes;
     right_ascension.seconds = seconds;
@@ -57,12 +57,6 @@ void astronomical_object::set_right_ascension(int hours, int minutes, double sec
 
 std::string astronomical_object::get_right_ascension() const
 {
-
-    // int hours = static_cast<int>(right_ascension);
-    // double remaining = (right_ascension - hours) * 60.0;
-    // int minutes = static_cast<int>(remaining);
-    // remaining = (remaining * 60.0) - minutes;
-    // double seconds = remaining * 60.0;
 
     std::stringstream out;
     out<<right_ascension.hours<<'h'<<right_ascension.minutes<<'m'<<right_ascension.seconds<<'s';
