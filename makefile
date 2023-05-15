@@ -10,6 +10,7 @@ BIN_DIR = bin
 
 # Files
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+INCLUDES = 
 OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 EXECUTABLE = $(BIN_DIR)/main
 
@@ -25,6 +26,6 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(wildcard $(INCLUDE_DIR)/*.h)
 	$(CXX) $(CXXFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 clean:
-	@rm -rf $(BUILD_DIR) $(BIN_DIR)
+	@rm -rf $(BUILD_DIR) $(BIN_DIR)/main
 
 .PHONY: all clean

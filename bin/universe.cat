@@ -1,3 +1,40 @@
+name                    alpha_centauri          
+type                    misc                    
+right_ascension         14h29m36.494s           
+declination             -60°50′15.0992″    
+distance                4.344                   
+mass                    1.3                       
+children                alpha_centauri_a  alpha_centauri_b  
+
+name                    alpha_centauri_a        
+type                    star                    
+right_ascension         14h39m36.494s           
+declination             -60°50′2.3737″     
+distance                1.3                     
+mass                    1.08                    
+relative_magnitude      0.01                    
+spectral_type           G                       
+children                
+
+name                    alpha_centauri_b        
+type                    star                    
+right_ascension         14h39m35.0631s          
+declination             -60°50′15.0992″    
+distance                1.3                     
+mass                    0.9093                  
+relative_magnitude      1.33                    
+spectral_type           K                       
+children                
+
+name                    earth                   
+type                    planet                  
+right_ascension         0h0m0s                  
+declination             0°0′0″             
+distance                4.8477e-06              
+mass                    2.985e-06               
+period                  1                       
+children                
+
 name                    jupiter                 
 type                    planet                  
 right_ascension         3h2m42.2s               
@@ -5,24 +42,7 @@ declination             -2°34′34.43″
 distance                2.52268e-05             
 mass                    0.000949                
 period                  11.8593                 
-children    
-
-name                    alpha_centauri          
-type                    misc                    
-right_ascension         14h29m36.494s           
-declination             -60°50′15.0992″    
-distance                4.344                   
-mass                    2                                         
 children                
-
-name                    earth                   
-type                    planet                  
-right_ascension         0h0m0s                  
-declination             0°0′0″             
-distance                0.000004847699287                       
-mass                    2.985e-06               
-period                  1                       
-children                            
 
 name                    mars                    
 type                    planet                  
@@ -95,7 +115,7 @@ declination             -72°32′9.3124″
 distance                9.29034e-05             
 mass                    4.34e-05                
 period                  84                      
-children                  
+children                
 
 name                    venus                   
 type                    planet                  

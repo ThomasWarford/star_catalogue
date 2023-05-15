@@ -1,0 +1,28 @@
+name                    star_x        
+type                    star                    
+right_ascension         13h39m36.494s           
+declination             -20°50′2.3737″     
+distance                150000                    
+mass                    20                    
+relative_magnitude      0.1                    
+spectral_type           G                       
+children                
+
+name                    star_y        
+type                    star                    
+right_ascension         13h39m36.494s           
+declination             -20°50′2.3737″     
+distance                150000                     
+mass                    20                    
+relative_magnitude      0.1                    
+spectral_type           G                       
+children                
+
+name                    distant_galaxy        
+type                    galaxy                    
+right_ascension         13h39m36.494s           
+declination             -20°50′2.3737″     
+distance                150000                    
+mass                    3e8                    
+hubble_type             E1                       
+children                star_x      star_y

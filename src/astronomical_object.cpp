@@ -1,6 +1,6 @@
 #include<iostream>
 #include<sstream>
-#include<astronomical_object.h>
+#include"astronomical_object.h"
 #include<functions.h>
 #include <regex>
 
